@@ -1,5 +1,3 @@
-import asyncio
-
 import discord
 import youtube_dl
 
@@ -35,9 +33,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.url = data.get('url')
 
     @classmethod
-    async def from_url(cls, url: str, *, loop=None, stream: bool = False) -> tuple[str]:
-        loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+    async def from_url(cls, url: str, stream: bool = False) -> tuple[str]:
+        data = ytdl.extract_info(url, download=not stream)
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]
