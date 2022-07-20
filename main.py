@@ -46,9 +46,9 @@ async def play(ctx: commands.context.Context, url: str):
         server = ctx.message.guild
         voice_channel = server.voice_client
         async with ctx.typing():
-            filename = await YTDLSource.from_url(url, loop=bot.loop)
-            voice_channel.play(FFmpegPCMAudio(filename[0]))
-        await ctx.send(f'Now playing: **{filename[1]}**')
+            player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
+            voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+        await ctx.send(f'Now playing: **{player.title}**')
     except commands.errors.ClientException:
         pass
 
