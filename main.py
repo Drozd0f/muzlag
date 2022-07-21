@@ -11,6 +11,8 @@ def setup_command():
     BOT.add_command(handlers.ping)
     BOT.add_command(handlers.play)
     BOT.add_command(handlers.stop)
+    BOT.add_command(handlers.skip)
+
     BOT.add_command(handlers.danilo)
     BOT.add_command(handlers.vovan)
     BOT.add_command(handlers.nikita)

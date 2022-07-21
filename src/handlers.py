@@ -80,5 +80,18 @@ async def stop(ctx: commands.context.Context):
         ctx.voice_client.stop()
         queue.drop(ctx.message.author.voice.channel.id)
         await ctx.voice_client.disconnect()
+    else:
+        await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
+
+
+@commands.command()
+async def skip(ctx: commands.context.Context):
+    queue = MuzlagQueue()
+    if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
+        await ctx.send(f"**{ctx.message.author.name}** ты как сюда дозвонился шизоид?")
         return
-    await ctx.send(f'Меня даже в голосовом канале нет, ты **{ctx.message.author.name}** меня не остановишь?')
+    if ctx.voice_client.is_connected():
+        ctx.voice_client.pause()
+        queue.skip(ctx.message.author.voice.channel.id)
+    else:
+        await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
