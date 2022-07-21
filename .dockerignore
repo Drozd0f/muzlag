@@ -1,0 +1,7 @@
+venv
+env
+ops
+.git
+.github
+.idea
+.vscode
