@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  muzlag:
+    command: bash -c "python3 /muzlag/main.py"
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
