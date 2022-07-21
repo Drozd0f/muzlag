@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import discord
 import youtube_dl
 
@@ -33,7 +35,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.url = data.get('url')
 
     @classmethod
-    async def from_url(cls, url: str, stream: bool = False) -> tuple[str]:
+    async def from_url(cls, url: str, stream: bool = False) -> YTDLSource:
         data = ytdl.extract_info(url, download=not stream)
         if 'entries' in data:
             # take first item from a playlist
