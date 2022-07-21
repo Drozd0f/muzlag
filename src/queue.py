@@ -21,9 +21,17 @@ class MuzlagQueue:
 
     def get(self, channel_id: int) -> str:
         if channel_id not in self.__queues:
+            self.drop(channel_id)
             raise QueueEmpty
         return self.__queues[channel_id].get_nowait()
+
+    def skip(self, channel_id: int):
+        if queues := self.__queues.get(channel_id):
+            queues.task_done()
 
     def drop(self, channel_id: int):
         if channel_id in self.__queues:
             del(self.__queues[channel_id])
+
+    def __contains__(self, channel_id: int) -> bool:
+        return channel_id in self.__queues
