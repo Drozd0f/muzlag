@@ -12,31 +12,6 @@ async def ping(ctx: commands.context.Context):
     await ctx.send('pong')
 
 
-@commands.command(name='danillo', help='Play Danilo song')
-async def danilo(ctx: commands.context.Context):
-    await play(ctx, 'https://youtu.be/jZlkINQLGro')
-
-
-@commands.command(name='vovan', help='Play Vovan song')
-async def vovan(ctx: commands.context.Context):
-    await play(ctx, 'https://youtu.be/wt-jj1qNScI')
-
-
-@commands.command(name='nikita', help='Play Nikita song')
-async def nikita(ctx: commands.context.Context):
-    await play(ctx, 'https://youtu.be/7w9huXMoZF0')
-
-
-@commands.command(name='vadick', help='Play Vadick song')
-async def vadick(ctx: commands.context.Context):
-    await play(ctx, 'https://youtu.be/L4hPnTpE2JE')
-
-
-@commands.command(name='vadoom', help='Play Vadoom song')
-async def vadoom(ctx: commands.context.Context):
-    await play(ctx, 'https://youtu.be/vCb1SGRceik')
-
-
 @commands.command(name='play', help='Play song by link or add to queue')
 async def play(ctx: commands.context.Context, url: str):
     if not ctx.message.author.voice:
@@ -102,3 +77,28 @@ async def skip(ctx: commands.context.Context, count: int = 1):
             await ctx.voice_client.disconnect()
     else:
         await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
+
+
+@commands.command(name='danillo', help='Play Danilo song', hidden=True)
+async def danilo(ctx: commands.context.Context):
+    await play(ctx, 'https://youtu.be/jZlkINQLGro')
+
+
+@commands.command(name='vovan', help='Play Vovan song', hidden=True)
+async def vovan(ctx: commands.context.Context):
+    await play(ctx, 'https://youtu.be/wt-jj1qNScI')
+
+
+@commands.command(name='nikita', help='Play Nikita song', hidden=True)
+async def nikita(ctx: commands.context.Context):
+    await play(ctx, 'https://youtu.be/7w9huXMoZF0')
+
+
+@commands.command(name='vadick', help='Play Vadick song', hidden=True)
+async def vadick(ctx: commands.context.Context):
+    await play(ctx, 'https://youtu.be/L4hPnTpE2JE')
+
+
+@commands.command(name='vadoom', help='Play Vadoom song', hidden=True)
+async def vadoom(ctx: commands.context.Context):
+    await play(ctx, 'https://youtu.be/vCb1SGRceik')

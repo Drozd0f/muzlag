@@ -38,24 +38,12 @@ make log
 ```
 
 ---
-## Category commands
-
-### Main commands
+## Commands
 
 |    Command    |                  Description                 |
 |:-------------:|:--------------------------------------------:|
-|     ?help     |         Shows all info about command         |
+|     ?help     |         Shows all info about commands        |
 |     ?ping     |                  Healthcheck                 |
 |     ?play     |       Play song by link or add to queue      |
 | ?skip [count] | Skip current song (default) or several songs |
 |     ?stop     |            Stop all songs in queue           |
-
-### Easter eggs commands
-
-| Command |    Description   |
-|:-------:|:----------------:|
-| ?danilo | Play Danilo song |
-| ?nikita | Play Nikita song |
-| ?vadick | Play Vadick song |
-| ?vadoom | Play Vadoom song |
-|  ?vovan |  Play Vovan song |
