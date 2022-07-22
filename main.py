@@ -7,7 +7,11 @@ from src import handlers
 from src.log import setup_logging
 
 log = logging.getLogger(__name__)
-BOT = commands.Bot(command_prefix='?')
+HELP_COMMAND = commands.DefaultHelpCommand(
+    no_category='Commands'
+)
+
+BOT = commands.Bot(command_prefix='?', help_command=HELP_COMMAND)
 
 
 def setup_command():

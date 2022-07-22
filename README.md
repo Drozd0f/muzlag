@@ -7,6 +7,7 @@
 * Docker
 * docker-compose
 * Make
+* ffmpeg
 
 ### Quick start
 > **Note**
@@ -49,7 +50,7 @@ make log
 | ?skip [count] | Skip current song (default) or several songs |
 |     ?stop     |            Stop all songs in queue           |
 
-### Local meme commands
+### Easter eggs commands
 
 | Command |    Description   |
 |:-------:|:----------------:|
