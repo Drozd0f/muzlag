@@ -12,32 +12,32 @@ async def ping(ctx: commands.context.Context):
     await ctx.send('pong')
 
 
-@commands.command()
+@commands.command(name='danillo', help='Play Danilo song')
 async def danilo(ctx: commands.context.Context):
     await play(ctx, 'https://youtu.be/jZlkINQLGro')
 
 
-@commands.command()
+@commands.command(name='vovan', help='Play Vovan song')
 async def vovan(ctx: commands.context.Context):
     await play(ctx, 'https://youtu.be/wt-jj1qNScI')
 
 
-@commands.command()
+@commands.command(name='nikita', help='Play Nikita song')
 async def nikita(ctx: commands.context.Context):
     await play(ctx, 'https://youtu.be/7w9huXMoZF0')
 
 
-@commands.command()
+@commands.command(name='vadick', help='Play Vadick song')
 async def vadick(ctx: commands.context.Context):
     await play(ctx, 'https://youtu.be/L4hPnTpE2JE')
 
 
-@commands.command()
+@commands.command(name='vadoom', help='Play Vadoom song')
 async def vadoom(ctx: commands.context.Context):
     await play(ctx, 'https://youtu.be/vCb1SGRceik')
 
 
-@commands.command()
+@commands.command(name='play', help='Play song by link or add to queue')
 async def play(ctx: commands.context.Context, url: str):
     if not ctx.message.author.voice:
         await ctx.send(f"**{ctx.message.author.name}** ты как сюда дозвонился шизоид?")
@@ -55,6 +55,9 @@ async def play(ctx: commands.context.Context, url: str):
 
     while True:
         try:
+            while ctx.voice_client.is_paused():
+                await asyncio.sleep(1)
+
             song = queue.get(channel.id)
             async with ctx.typing():
                 player = await YTDLSource.from_url(song, stream=True)
@@ -63,7 +66,6 @@ async def play(ctx: commands.context.Context, url: str):
 
             while ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
-
         except asyncio.QueueEmpty:
             break
         except AttributeError:
@@ -73,7 +75,7 @@ async def play(ctx: commands.context.Context, url: str):
     await ctx.voice_client.disconnect()
 
 
-@commands.command()
+@commands.command(name='stop', help='Stop all songs in queue')
 async def stop(ctx: commands.context.Context):
     queue = MuzlagQueue()
     if ctx.voice_client.is_connected():
@@ -84,14 +86,19 @@ async def stop(ctx: commands.context.Context):
         await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
 
 
-@commands.command()
-async def skip(ctx: commands.context.Context):
+@commands.command(name='skip', help='Skip current song (default) or several songs')
+async def skip(ctx: commands.context.Context, count: int = 1):
     queue = MuzlagQueue()
     if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
         await ctx.send(f"**{ctx.message.author.name}** ты как сюда дозвонился шизоид?")
         return
     if ctx.voice_client.is_connected():
-        ctx.voice_client.pause()
-        queue.skip(ctx.message.author.voice.channel.id)
+        try:
+            ctx.voice_client.pause()
+            queue.skip(ctx.message.author.voice.channel.id, count)
+            ctx.voice_client.resume()
+        except asyncio.QueueEmpty:
+            ctx.voice_client.stop()
+            await ctx.voice_client.disconnect()
     else:
         await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')

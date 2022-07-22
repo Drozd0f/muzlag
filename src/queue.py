@@ -25,7 +25,9 @@ class MuzlagQueue:
             raise QueueEmpty
         return self.__queues[channel_id].get_nowait()
 
-    def skip(self, channel_id: int):
+    def skip(self, channel_id: int, count: int):
+        for _ in range(count):
+            self.__queues[channel_id].get_nowait()
         if queues := self.__queues.get(channel_id):
             queues.task_done()
 
