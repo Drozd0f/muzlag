@@ -1,7 +1,6 @@
-FROM python:3 as base
+FROM python:3
 WORKDIR /muzlag
-RUN apt-get -y update && apt-get -y upgrade
-RUN apt-get install -y ffmpeg
+RUN apt -y update && apt -y upgrade && apt install -y ffmpeg
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
