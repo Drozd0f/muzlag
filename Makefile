@@ -6,5 +6,8 @@ run:
 rm:
 	$(COMPOSE) rm -sfv
 
+log:
+	$(COMPOSE) logs -f muzlag 
+
 lint:
 	@flake8

@@ -3,8 +3,13 @@ version: '3.4'
 services:
   muzlag:
     command: bash -c "python3 /muzlag/main.py"
+    restart: always
+    volumes:
+      - .:/muzlag
     build: 
       context: .
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      PYTHONUNBUFFERED: 1
