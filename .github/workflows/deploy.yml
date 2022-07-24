@@ -15,14 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
       with:
@@ -30,11 +23,11 @@ jobs:
           known_hosts: 'placeholder'
 
     - name: Adding known_hosts
-      run: ssh-keyscan -p ${{ secrets.RASPBERRY_PORT }} ${{ secrets.RASPBERRY_DOM }} >> ~/.ssh/known_hosts
+      run: ssh-keyscan -p ${{ secrets.RASPBERRY_PORT }} ${{ secrets.RASPBERRY_HOST }} >> ~/.ssh/known_hosts
 
     - name: Deploy
       run: |
-        rsync -avz . ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_DOM }}:${{ secrets.RASPBERRY_PORT }}:~/muzlag
-        ssh -T ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} << EOF
+        rsync -avz -e 'ssh -p ${{ secrets.RASPBERRY_PORT }}' . ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }}:~/muzlag
+        ssh -p ${{ secrets.RASPBERRY_PORT }} -T ${{ secrets.RASPBERRY_USER }}@${{ secrets.RASPBERRY_HOST }} << EOF
           sudo systemctl restart muzlag
         EOF
