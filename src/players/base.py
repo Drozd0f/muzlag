@@ -11,5 +11,5 @@ class BasePlayer:
         cls.name = name
 
     @abstractclassmethod
-    async def from_url(cls, url: str, stream: bool = False) -> discord.PCMVolumeTransformer:
+    def from_url(cls, url: str, stream: bool = False) -> discord.PCMVolumeTransformer:
         raise NotImplementedError

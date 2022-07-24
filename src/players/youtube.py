@@ -36,7 +36,7 @@ class YoutubePlayer(discord.PCMVolumeTransformer, BasePlayer, name='youtu'):
         self.url = data.get('url')
 
     @classmethod
-    async def from_url(cls, url: str, stream: bool = False) -> discord.PCMVolumeTransformer:
+    def from_url(cls, url: str, stream: bool = False) -> discord.PCMVolumeTransformer:
         data = ytdl.extract_info(url, download=not stream)
         if 'entries' in data:
             # take first item from a playlist
