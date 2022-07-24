@@ -35,7 +35,7 @@ async def play(ctx: commands.context.Context, url: str):
 
             song = queue.get(channel.id)
             async with ctx.typing():
-                player = await player_factory(song, stream=True)
+                player = player_factory(song, stream=True)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
             await ctx.send(f'Now playing: **{player.title}**')
 
