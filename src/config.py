@@ -1,6 +1,4 @@
-import os
-
 from pathlib import Path
 
 
-BASE_PATH = Path(os.getcwd()).resolve()
+BASE_PATH = Path(__file__).parent.parent.resolve()
