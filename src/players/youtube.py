@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import discord
 import youtube_dl
+import discord
 
+from src.players.base import BasePlayer
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -27,7 +28,7 @@ ffmpeg_options = {
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
-class YTDLSource(discord.PCMVolumeTransformer):
+class YoutubePlayer(discord.PCMVolumeTransformer, BasePlayer, name='youtu'):
     def __init__(self, source, *, data, volume=1):
         super().__init__(source, volume)
         self.data = data
@@ -35,7 +36,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.url = data.get('url')
 
     @classmethod
-    async def from_url(cls, url: str, stream: bool = False) -> YTDLSource:
+    async def from_url(cls, url: str, stream: bool = False) -> discord.PCMVolumeTransformer:
         data = ytdl.extract_info(url, download=not stream)
         if 'entries' in data:
             # take first item from a playlist

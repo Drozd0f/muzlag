@@ -4,7 +4,7 @@ from discord import VoiceChannel
 from discord.ext import commands
 
 from src.queue import MuzlagQueue
-from src.youtube import YTDLSource
+from src.players import player_factory
 
 
 @commands.command(name='ping', help='Healthcheck')
@@ -35,7 +35,7 @@ async def play(ctx: commands.context.Context, url: str):
 
             song = queue.get(channel.id)
             async with ctx.typing():
-                player = await YTDLSource.from_url(song, stream=True)
+                player = await player_factory(song, stream=True)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
             await ctx.send(f'Now playing: **{player.title}**')
 
@@ -79,7 +79,7 @@ async def skip(ctx: commands.context.Context, count: int = 1):
         await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
 
 
-@commands.command(name='danillo', help='Play Danilo song', hidden=True)
+@commands.command(name='danilo', help='Play Danilo song', hidden=True)
 async def danilo(ctx: commands.context.Context):
     await play(ctx, 'https://youtu.be/jZlkINQLGro')
 
