@@ -37,7 +37,8 @@ async def play(ctx: commands.context.Context, url: str):
             async with ctx.typing():
                 player = player_factory(song, stream=True)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-            await ctx.send(f'Now playing: **{player.title}**')
+            if not queue.is_repeat(channel.id):
+                await ctx.send(f'Now playing: **{player.title}**')
 
             while ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
@@ -71,6 +72,24 @@ async def skip(ctx: commands.context.Context, count: int = 1):
         try:
             ctx.voice_client.pause()
             queue.skip(ctx.message.author.voice.channel.id, count)
+            ctx.voice_client.resume()
+        except asyncio.QueueEmpty:
+            ctx.voice_client.stop()
+            await ctx.voice_client.disconnect()
+    else:
+        await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
+
+
+@commands.command(name='repeat', help='Set song to repeat')
+async def repeat(ctx: commands.context.Context):
+    queue = MuzlagQueue()
+    if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
+        await ctx.send(f"**{ctx.message.author.name}** ты как сюда дозвонился шизоид?")
+        return
+    if ctx.voice_client.is_connected():
+        try:
+            ctx.voice_client.pause()
+            queue.switch_repeat(ctx.message.author.voice.channel.id)
             ctx.voice_client.resume()
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()

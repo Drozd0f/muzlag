@@ -48,3 +48,4 @@ make log
 |     ?play     |       Play song by link or add to queue      |
 | ?skip [count] | Skip current song (default) or several songs |
 |     ?stop     |            Stop all songs in queue           |
+|     ?repeat   |              Repeat song in queue            |
