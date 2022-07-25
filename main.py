@@ -21,6 +21,7 @@ def setup_command():
     BOT.add_command(handlers.play)
     BOT.add_command(handlers.stop)
     BOT.add_command(handlers.skip)
+    BOT.add_command(handlers.repeat)
 
     BOT.add_command(handlers.danilo)
     BOT.add_command(handlers.vovan)
