@@ -1,15 +1,29 @@
 from __future__ import annotations
-from asyncio import Queue, QueueEmpty
-from dataclasses import dataclass
-
 import typing as t
+from asyncio import Queue, QueueEmpty
+from collections import deque
+
+from src.players import player_factory
 
 
-@dataclass
-class ModQueue:
-    queue: Queue = Queue()
-    is_repeat: bool = False
-    current_song: t.Optional[str] = None
+class ModQueue(Queue):
+    __is_repeat: bool = False
+
+    @property
+    def queue(self) -> deque:
+        return self._queue
+
+    @property
+    def current_song(self) -> str:
+        return self._queue[0]
+
+    @property
+    def is_repeat(self) -> bool:
+        return self.__is_repeat
+
+    @is_repeat.setter
+    def is_repeat(self, value: bool):
+        self.__is_repeat = value
 
 
 class MuzlagQueue:
@@ -25,14 +39,14 @@ class MuzlagQueue:
     async def push(self, channel_id: int, song_url: str):
         if channel_id not in self.__queues:
             self.__queues[channel_id] = ModQueue()
-        await self.__queues[channel_id].queue.put(song_url)
+        await self.__queues[channel_id].put(song_url)
 
     def get(self, channel_id: int) -> str:
         if channel_id not in self.__queues:
             self.drop(channel_id)
             raise QueueEmpty
         if not self.__queues[channel_id].is_repeat:
-            self.__queues[channel_id].current_song = self.__queues[channel_id].queue.get_nowait()
+            self.__queues[channel_id].current_song = self.__queues[channel_id].get_nowait()
         return self.__queues[channel_id].current_song
 
     def switch_repeat(self, channel_id: int):
@@ -41,10 +55,16 @@ class MuzlagQueue:
             raise QueueEmpty
         self.__queues[channel_id].is_repeat = not self.__queues[channel_id].is_repeat
 
+    def show_queue(self, channel_id: int):
+        if channel_id not in self.__queues:
+            self.drop(channel_id)
+            raise QueueEmpty
+        return [player_factory(url).title_from_url(url) for url in self.__queues[channel_id].queue]
+
     def skip(self, channel_id: int, count: int):
         for _ in range(count):
-            self.__queues[channel_id].queue.get_nowait()
-        if queue := self.__queues.get(channel_id).queue:
+            self.__queues[channel_id].get_nowait()
+        if queue := self.__queues.get(channel_id):
             queue.task_done()
 
     def drop(self, channel_id: int):

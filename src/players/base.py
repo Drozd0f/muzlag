@@ -13,3 +13,7 @@ class BasePlayer:
     @abstractclassmethod
     def from_url(cls, url: str, stream: bool = False) -> discord.PCMVolumeTransformer:
         raise NotImplementedError
+
+    @abstractclassmethod
+    def title_from_url(cls, url: str) -> str:
+        raise NotImplementedError
