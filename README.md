@@ -1,4 +1,4 @@
-# Discord bot **``MUZLAG``**
+# Discord music bot **``MUZLAG``**
 [![Lint](https://github.com/Drozd0f/muzlag/actions/workflows/linter.yml/badge.svg)](https://github.com/Drozd0f/muzlag/actions/workflows/linter.yml)
 [![Deploy](https://github.com/Drozd0f/muzlag/actions/workflows/deploy.yml/badge.svg)](https://github.com/Drozd0f/muzlag/actions/workflows/deploy.yml)
 

@@ -43,3 +43,8 @@ class YoutubePlayer(discord.PCMVolumeTransformer, BasePlayer, name='youtu'):
             data = data['entries'][0]
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+
+    @classmethod
+    def title_from_url(cls, url: str) -> str:
+        data = ytdl.extract_info(url, download=False)
+        return data.get('title')
