@@ -41,11 +41,12 @@ make log
 ---
 ## Commands
 
-|    Command    |                  Description                 |
+|    Command    |                 Description                  |
 |:-------------:|:--------------------------------------------:|
-|     ?help     |         Shows all info about commands        |
-|     ?ping     |                  Healthcheck                 |
-|     ?play     |       Play song by link or add to queue      |
+|     ?help     |        Shows all info about commands         |
+|     ?ping     |                 Healthcheck                  |
+|     ?play     |      Play song by link or add to queue       |
 | ?skip [count] | Skip current song (default) or several songs |
-|     ?stop     |            Stop all songs in queue           |
-|     ?repeat   |              Repeat song in queue            |
+|     ?stop     |           Stop all songs in queue            |
+|    ?repeat    |             Repeat song in queue             |
+|    ?queue     |               Show songs queue               |

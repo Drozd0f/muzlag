@@ -9,4 +9,4 @@ players = [
 def player_factory(url: str) -> BasePlayer:
     for player in players:
         if player.name in url:
-            return player
+            return player.from_url(url, stream=True)

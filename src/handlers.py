@@ -32,12 +32,10 @@ async def play(ctx: commands.context.Context, url: str):
         try:
             while ctx.voice_client.is_paused():
                 await asyncio.sleep(1)
-
             song = queue.get(channel.id)
             async with ctx.typing():
-                player = player_factory(song)
                 ctx.voice_client.play(
-                    player.from_url(song, stream=True),
+                    player := player_factory(song),
                     after=lambda e: print('Player error: %s' % e) if e else None
                 )
             if not queue.is_repeat(channel.id):
@@ -49,7 +47,6 @@ async def play(ctx: commands.context.Context, url: str):
             break
         except AttributeError:
             return
-
     ctx.voice_client.stop()
     await ctx.voice_client.disconnect()
 
