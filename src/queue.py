@@ -74,7 +74,7 @@ class MuzlagQueue:
 
     def drop(self, channel_id: int):
         if channel_id in self.__queues:
-            del(self.__queues[channel_id])
+            del self.__queues[channel_id]
 
     def is_repeat(self, channel_id: int) -> bool:
         return self.__queues[channel_id].is_repeat

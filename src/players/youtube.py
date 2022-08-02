@@ -28,18 +28,17 @@ ffmpeg_options = {
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
-class YoutubePlayer(BasePlayer, domain_name='youtu'):
-    def __init__(self, source, *, data, volume=1):
-        super().__init__(source, volume)
-        self.data = data
-        self.title = data.get('title')
-        self.url = data.get('url')
+class YoutubePlayer(BasePlayer):
+    def play(self) -> discord.PCMVolumeTransformer:
+        return self._play(
+            discord.FFmpegPCMAudio(self.url, **ffmpeg_options),
+            volume=1
+        )
 
     @classmethod
-    def from_url(cls, url: str, stream: bool = False) -> YoutubePlayer:
-        data = ytdl.extract_info(url, download=not stream)
+    def from_url(cls, url: str) -> YoutubePlayer:
+        data = ytdl.extract_info(url, download=False)
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]
-        filename = data['url'] if stream else ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+        return cls(data)

@@ -34,8 +34,9 @@ async def play(ctx: commands.context.Context, url: str):
                 await asyncio.sleep(1)
             song = queue.get(channel.id)
             async with ctx.typing():
+                player = player_factory(song)
                 ctx.voice_client.play(
-                    player := player_factory(song),
+                    player.play(),
                     after=lambda e: print('Player error: %s' % e) if e else None
                 )
             if not queue.is_repeat(channel.id):
@@ -109,14 +110,15 @@ async def queue(ctx: commands.context.Context):
         return
     if ctx.voice_client.is_connected():
         try:
-            titles = 'Current queue:\n'
-            res = queue.show_queue(ctx.message.author.voice.channel.id)
-            if not res:
-                await ctx.send(':anger: :japanese_goblin:**One song is not queue** :anger:')
-                return
-            for idx, item in enumerate(res):
-                titles += f'{idx + 1}. {item};\n'
-            await ctx.send(f'**{titles}**')
+            async with ctx.typing():
+                titles = 'Current queue:\n'
+                res = queue.show_queue(ctx.message.author.voice.channel.id)
+                if not res:
+                    await ctx.send(':anger: :japanese_goblin:**One song is not queue** :anger:')
+                    return
+                for idx, item in enumerate(res):
+                    titles += f'{idx + 1}. {item};\n'
+                await ctx.send(f'**{titles}**')
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()
