@@ -1,19 +1,24 @@
-from abc import abstractclassmethod
+from __future__ import annotations
+
+from abc import abstractmethod, abstractclassmethod
 
 import discord
 
 
 class BasePlayer:
-    def __init_subclass__(cls, name: str):
-        super().__init_subclass__()
-        if not name:
-            raise AttributeError('Player must had name')
-        cls.name = name
+    def __init__(self, data: dict):
+        self.data = data
+        self.title = data.get('title')
+        self.url = data.get('url')
 
-    @abstractclassmethod
-    def from_url(cls, url: str, stream: bool = False) -> discord.PCMVolumeTransformer:
+    @staticmethod
+    def _play(source: discord.FFmpegPCMAudio, volume: float):
+        return discord.PCMVolumeTransformer(source, volume)
+
+    @abstractmethod
+    def play(self) -> discord.PCMVolumeTransformer:
         raise NotImplementedError
 
     @abstractclassmethod
-    def title_from_url(cls, url: str) -> str:
+    def from_url(cls, url: str) -> BasePlayer:
         raise NotImplementedError

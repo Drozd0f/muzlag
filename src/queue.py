@@ -8,6 +8,7 @@ from src.players import player_factory
 
 class ModQueue(Queue):
     __is_repeat: bool = False
+    __current_song: t.Optional[str] = None
 
     @property
     def queue(self) -> deque:
@@ -15,7 +16,11 @@ class ModQueue(Queue):
 
     @property
     def current_song(self) -> str:
-        return self._queue[0]
+        return self.__current_song
+
+    @current_song.setter
+    def current_song(self, song: str):
+        self.__current_song = song
 
     @property
     def is_repeat(self) -> bool:
@@ -59,7 +64,7 @@ class MuzlagQueue:
         if channel_id not in self.__queues:
             self.drop(channel_id)
             raise QueueEmpty
-        return [player_factory(url).title_from_url(url) for url in self.__queues[channel_id].queue]
+        return [player_factory(url).title for url in self.__queues[channel_id].queue]
 
     def skip(self, channel_id: int, count: int):
         for _ in range(count):
@@ -69,7 +74,7 @@ class MuzlagQueue:
 
     def drop(self, channel_id: int):
         if channel_id in self.__queues:
-            del(self.__queues[channel_id])
+            del self.__queues[channel_id]
 
     def is_repeat(self, channel_id: int) -> bool:
         return self.__queues[channel_id].is_repeat
