@@ -3,24 +3,24 @@ import typing as t
 from asyncio import Queue, QueueEmpty
 from collections import deque
 
-from src.players import player_factory
+from src.players.base import BasePlayer
 
 
 class ModQueue(Queue):
     __is_repeat: bool = False
-    __current_song: t.Optional[str] = None
+    __current_player: t.Optional[BasePlayer] = None
 
     @property
     def queue(self) -> deque:
         return self._queue
 
     @property
-    def current_song(self) -> str:
-        return self.__current_song
+    def current_player(self) -> BasePlayer:
+        return self.__current_player
 
-    @current_song.setter
-    def current_song(self, song: str):
-        self.__current_song = song
+    @current_player.setter
+    def current_player(self, player: BasePlayer):
+        self.__current_player = player
 
     @property
     def is_repeat(self) -> bool:
@@ -41,18 +41,18 @@ class MuzlagQueue:
         cls.obj = super().__new__(cls, *args, **kwargs)
         return cls.obj
 
-    async def push(self, channel_id: int, song_url: str):
+    async def push(self, channel_id: int, player: BasePlayer):
         if channel_id not in self.__queues:
             self.__queues[channel_id] = ModQueue()
-        await self.__queues[channel_id].put(song_url)
+        await self.__queues[channel_id].put(player)
 
-    def get(self, channel_id: int) -> str:
+    def get(self, channel_id: int) -> BasePlayer:
         if channel_id not in self.__queues:
             self.drop(channel_id)
             raise QueueEmpty
         if not self.__queues[channel_id].is_repeat:
-            self.__queues[channel_id].current_song = self.__queues[channel_id].get_nowait()
-        return self.__queues[channel_id].current_song
+            self.__queues[channel_id].current_player = self.__queues[channel_id].get_nowait()
+        return self.__queues[channel_id].current_player
 
     def switch_repeat(self, channel_id: int):
         if channel_id not in self.__queues:
@@ -60,11 +60,14 @@ class MuzlagQueue:
             raise QueueEmpty
         self.__queues[channel_id].is_repeat = not self.__queues[channel_id].is_repeat
 
-    def show_queue(self, channel_id: int):
+    def show_queue(self, channel_id: int) -> str:
         if channel_id not in self.__queues:
             self.drop(channel_id)
             raise QueueEmpty
-        return [player_factory(url).title for url in self.__queues[channel_id].queue]
+        queue = ''
+        for idx, player in enumerate(self.__queues[channel_id].queue):
+            queue += f'{idx + 1}. {player.title} \n'
+        return queue
 
     def skip(self, channel_id: int, count: int):
         for _ in range(count):

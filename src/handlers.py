@@ -21,7 +21,9 @@ async def play(ctx: commands.context.Context, url: str):
     channel: VoiceChannel = ctx.message.author.voice.channel
 
     queue = MuzlagQueue()
-    await queue.push(channel.id, url)
+    player = player_factory(url)
+    await queue.push(channel.id, player)
+    await ctx.send(f':white_check_mark: Added to playback :ok:: **{player.title}**')
 
     if ctx.voice_client is not None:
         return
@@ -32,15 +34,16 @@ async def play(ctx: commands.context.Context, url: str):
         try:
             while ctx.voice_client.is_paused():
                 await asyncio.sleep(1)
-            song = queue.get(channel.id)
+
             async with ctx.typing():
-                player = player_factory(song)
+                player = queue.get(channel.id)
                 ctx.voice_client.play(
                     player.play(),
                     after=lambda e: print('Player error: %s' % e) if e else None
                 )
-            if not queue.is_repeat(channel.id):
-                await ctx.send(f'Now playing: **{player.title}**')
+            if queue.is_repeat(channel.id):
+                await ctx.send(f':repeat: On repeat :repeat: : **{player.title}**')
+            await ctx.send(f':musical_note: Now playing :musical_note: : **{player.title}**')
 
             while ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
@@ -111,13 +114,12 @@ async def queue(ctx: commands.context.Context):
     if ctx.voice_client.is_connected():
         try:
             async with ctx.typing():
-                titles = 'Current queue:\n'
+                titles = ':coffee: Current queue :coffee: :\n'
                 res = queue.show_queue(ctx.message.author.voice.channel.id)
                 if not res:
-                    await ctx.send(':anger: :japanese_goblin:**One song is not queue** :anger:')
+                    await ctx.send(':anger: :japanese_goblin:**One song is not enought for queue** :anger:')
                     return
-                for idx, item in enumerate(res):
-                    titles += f'{idx + 1}. {item};\n'
+                titles += res
                 await ctx.send(f'**{titles}**')
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()
