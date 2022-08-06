@@ -69,7 +69,7 @@ class MuzlagQueue:
             queue += f'{idx + 1}. {player.title} \n'
         return queue
 
-    def skip(self, channel_id: int, count: int):
+    def skip(self, channel_id: int, count: int = 1):
         for _ in range(count):
             self.__queues[channel_id].get_nowait()
         if queue := self.__queues.get(channel_id):
