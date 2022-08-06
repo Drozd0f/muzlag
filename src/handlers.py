@@ -37,7 +37,7 @@ async def play(ctx: commands.context.Context, url: str):
                 player = player_factory(song)
                 ctx.voice_client.play(
                     player.play(),
-                    after=lambda e: print('Player error: %s' % e) if e else None
+                    after=lambda e: print(f'Player error: {e}') if e else None
                 )
             if not queue.is_repeat(channel.id):
                 await ctx.send(f'Now playing: **{player.title}**')
