@@ -9,5 +9,10 @@ rm:
 log:
 	$(COMPOSE) logs -f muzlag 
 
+create-log-file:
+	@sudo touch /var/log/muzlag.log
+	@sudo chmod a+rwx muzlag.log
+	@echo file muzlag.log is created
+
 lint:
 	@flake8
