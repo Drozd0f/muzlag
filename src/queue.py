@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import typing as t
 from asyncio import Queue, QueueEmpty
 from collections import deque
@@ -64,20 +65,37 @@ class MuzlagQueue:
         if channel_id not in self.__queues:
             self.drop(channel_id)
             raise QueueEmpty
-        queue = ''
+
+        queue = f'1. {self.__queues[channel_id].current_player.title} \n'
+        if self.is_repeat(channel_id):
+            queue = f'1. {self.__queues[channel_id].current_player.title}  :repeat:\n'
+
         for idx, player in enumerate(self.__queues[channel_id].queue):
-            queue += f'{idx + 1}. {player.title} \n'
+            queue += f'{idx + 2}. {player.title} \n'
         return queue
 
-    def skip(self, channel_id: int, count: int):
-        for _ in range(count):
-            self.__queues[channel_id].get_nowait()
-        if queue := self.__queues.get(channel_id):
-            queue.task_done()
+    def skip(self, channel_id: int, count: int = 1):
+        if channel_id not in self.__queues:
+            self.drop(channel_id)
+            raise QueueEmpty
+
+        if count == 1:
+            if self.is_repeat(channel_id):
+                self.switch_repeat(channel_id)
+            self.__queues[channel_id].current_player = None
+        else:
+            for _ in range(count - 1):
+                self.__queues[channel_id].get_nowait()
+
+        if not len(self.__queues[channel_id].queue):
+            self.__queues.get(channel_id).task_done()
 
     def drop(self, channel_id: int):
         if channel_id in self.__queues:
             del self.__queues[channel_id]
+
+    def current_song(self, channel_id: int) -> str:
+        return self.__queues[channel_id].current_player.title
 
     def is_repeat(self, channel_id: int) -> bool:
         return self.__queues[channel_id].is_repeat

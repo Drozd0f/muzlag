@@ -32,21 +32,18 @@ async def play(ctx: commands.context.Context, url: str):
 
     while True:
         try:
-            while ctx.voice_client.is_paused():
-                await asyncio.sleep(1)
-
             async with ctx.typing():
                 player = queue.get(channel.id)
                 ctx.voice_client.play(
                     player.play(),
                     after=lambda e: print(f'Player error: {e}') if e else None
                 )
-            if queue.is_repeat(channel.id):
-                await ctx.send(f':repeat: On repeat :repeat: : **{player.title}**')
-            await ctx.send(f':musical_note: Now playing :musical_note: : **{player.title}**')
+            if not queue.is_repeat(channel.id):
+                await ctx.send(f':musical_note: Now playing :musical_note: : **{player.title}**')
 
             while ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
+
         except asyncio.QueueEmpty:
             break
         except AttributeError:
@@ -77,9 +74,8 @@ async def skip(ctx: commands.context.Context, count: int = 1):
         return
     if ctx.voice_client.is_connected():
         try:
-            ctx.voice_client.pause()
             queue.skip(ctx.message.author.voice.channel.id, count)
-            ctx.voice_client.resume()
+            ctx.voice_client.stop()
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()
@@ -93,14 +89,22 @@ async def repeat(ctx: commands.context.Context):
     if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
         await ctx.send(f'**{ctx.message.author.name}** ты как сюда дозвонился шизоид?')
         return
+    channel_id = ctx.message.author.voice.channel.id
     if ctx.voice_client.is_connected():
         try:
-            ctx.voice_client.pause()
             queue.switch_repeat(ctx.message.author.voice.channel.id)
-            ctx.voice_client.resume()
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()
+        if queue.is_repeat(channel_id):
+            await ctx.send(f':repeat: On repeat :repeat:  :  **{queue.current_song(channel_id)}**')
+        else:
+            await ctx.send(
+                (
+                    f':face_with_symbols_over_mouth: Off repeat :face_with_symbols_over_mouth: : '
+                    f'**{queue.current_song(channel_id)}**'
+                )
+            )
     else:
         await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
 
