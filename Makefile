@@ -11,7 +11,7 @@ log:
 
 create-log-file:
 	@sudo touch /var/log/muzlag.log
-	@sudo chmod a+rwx muzlag.log
+	@sudo chmod a+rwx /var/log/muzlag.log
 	@echo file muzlag.log is created
 
 lint:
