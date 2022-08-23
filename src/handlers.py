@@ -31,26 +31,21 @@ async def play(ctx: commands.context.Context, url: str):
 
     while True:
         try:
-            while ctx.voice_client.is_paused():
-                await asyncio.sleep(1)
-
             async with ctx.typing():
                 player = queue.get(channel.id)
                 ctx.voice_client.play(
                     player.play(),
                     after=lambda e: print(f'Player error: {e}') if e else None
                 )
-            if queue.is_repeat(channel.id):
-                await ctx.send(f':repeat: On repeat :repeat: : **{player.title}**')
-            await ctx.send(f':musical_note: Now playing :musical_note: : **{player.title}**')
+            if not queue.is_repeat(channel.id):
+                await ctx.send(f':musical_note: Now playing :musical_note: : **{player.title}**')
 
             while ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
-                shveps = channel.voice_states.keys()
-                if len(shveps) <= 1:
-                    queue.drop(channel.id)
+                vc_usr_list = channel.voice_states.keys()
+                if len(vc_usr_list) <= 1:
                     await ctx.send(':scream_cat: No one in voice channel :anger:, leaving ...')
-                    queue.show_queue(channel.id)
+                    queue.drop(channel.id)
         except asyncio.QueueEmpty:
             break
         except AttributeError:
@@ -82,9 +77,8 @@ async def skip(ctx: commands.context.Context, count: int = 1):
         return
     if ctx.voice_client.is_connected():
         try:
-            ctx.voice_client.pause()
             queue.skip(ctx.message.author.voice.channel.id, count)
-            ctx.voice_client.resume()
+            ctx.voice_client.stop()
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()
@@ -100,9 +94,7 @@ async def repeat(ctx: commands.context.Context):
         return
     if ctx.voice_client.is_connected():
         try:
-            ctx.voice_client.pause()
             queue.switch_repeat(ctx.message.author.voice.channel.id)
-            ctx.voice_client.resume()
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()

@@ -15,6 +15,7 @@
 > First of all create .env file with next variables
 ```
 TOKEN=BOT_TOKEN
+ENV='dev'/'prod'
 ```
 
 ---
@@ -36,6 +37,15 @@ make rm
 To display muzlag logs
 ```shell
 make log
+```
+
+---
+
+> **Note**
+> Create log file for prod
+
+```shell
+make create-log-file
 ```
 
 ---
