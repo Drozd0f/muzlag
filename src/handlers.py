@@ -15,11 +15,10 @@ async def ping(ctx: commands.context.Context):
 @commands.command(name='play', help='Play song by link or add to queue')
 async def play(ctx: commands.context.Context, url: str):
     if not ctx.message.author.voice:
-        await ctx.send(f'**{ctx.message.author.name}** ты как сюда дозвонился шизоид?')
+        await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
 
     channel: VoiceChannel = ctx.message.author.voice.channel
-
     queue = MuzlagQueue()
     player = player_factory(url)
     await queue.push(channel.id, player)
@@ -43,34 +42,38 @@ async def play(ctx: commands.context.Context, url: str):
 
             while ctx.voice_client.is_playing():
                 await asyncio.sleep(1)
-
+                vc_usr_list = channel.voice_states.keys()
+                if len(vc_usr_list) <= 1:
+                    await ctx.send(':scream_cat: No one in voice channel :anger:, leaving ...')
+                    queue.drop(channel.id)
         except asyncio.QueueEmpty:
             break
         except AttributeError:
             return
     ctx.voice_client.stop()
     await ctx.voice_client.disconnect()
+    await ctx.send('Playback stopped, bye :sleeping:')
 
 
 @commands.command(name='stop', help='Stop all songs in queue')
 async def stop(ctx: commands.context.Context):
     queue = MuzlagQueue()
     if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
-        await ctx.send(f'**{ctx.message.author.name}** ты как сюда дозвонился шизоид?')
+        await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
         ctx.voice_client.stop()
         queue.drop(ctx.message.author.voice.channel.id)
         await ctx.voice_client.disconnect()
     else:
-        await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
+        await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
 
 @commands.command(name='skip', help='Skip current song (default) or several songs')
 async def skip(ctx: commands.context.Context, count: int = 1):
     queue = MuzlagQueue()
     if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
-        await ctx.send(f'**{ctx.message.author.name}** ты как сюда дозвонился шизоид?')
+        await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
         try:
@@ -80,40 +83,30 @@ async def skip(ctx: commands.context.Context, count: int = 1):
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()
     else:
-        await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
+        await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
 
 @commands.command(name='repeat', help='Set song to repeat')
 async def repeat(ctx: commands.context.Context):
     queue = MuzlagQueue()
     if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
-        await ctx.send(f'**{ctx.message.author.name}** ты как сюда дозвонился шизоид?')
+        await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
-    channel_id = ctx.message.author.voice.channel.id
     if ctx.voice_client.is_connected():
         try:
             queue.switch_repeat(ctx.message.author.voice.channel.id)
         except asyncio.QueueEmpty:
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()
-        if queue.is_repeat(channel_id):
-            await ctx.send(f':repeat: On repeat :repeat:  :  **{queue.current_song(channel_id)}**')
-        else:
-            await ctx.send(
-                (
-                    f':face_with_symbols_over_mouth: Off repeat :face_with_symbols_over_mouth: : '
-                    f'**{queue.current_song(channel_id)}**'
-                )
-            )
     else:
-        await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
+        await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
 
 @commands.command(name='queue', help='Show songs queue')
 async def queue(ctx: commands.context.Context):
     queue = MuzlagQueue()
     if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
-        await ctx.send(f'**{ctx.message.author.name}** ты как сюда дозвонился шизоид?')
+        await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
         try:
@@ -129,7 +122,7 @@ async def queue(ctx: commands.context.Context):
             ctx.voice_client.stop()
             await ctx.voice_client.disconnect()
     else:
-        await ctx.send(f'**{ctx.message.author.name}** меня даже в голосовом канале нет!')
+        await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
 
 @commands.command(name='danilo', help='Play Danilo song', hidden=True)

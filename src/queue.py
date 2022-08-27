@@ -93,6 +93,7 @@ class MuzlagQueue:
     def drop(self, channel_id: int):
         if channel_id in self.__queues:
             del self.__queues[channel_id]
+        raise QueueEmpty
 
     def current_song(self, channel_id: int) -> str:
         return self.__queues[channel_id].current_player.title
