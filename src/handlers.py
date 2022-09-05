@@ -50,7 +50,6 @@ async def play(ctx: commands.context.Context, url: str):
             break
         except AttributeError:
             return
-    ctx.voice_client.stop()
     await ctx.voice_client.disconnect()
     await ctx.send('Playback stopped, bye :sleeping:')
 
@@ -62,9 +61,10 @@ async def stop(ctx: commands.context.Context):
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
-        ctx.voice_client.stop()
-        queue.drop(ctx.message.author.voice.channel.id)
-        await ctx.voice_client.disconnect()
+        try:
+            queue.drop(ctx.message.author.voice.channel.id)
+        except asyncio.QueueEmpty:
+            await ctx.voice_client.disconnect()
     else:
         await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
@@ -76,12 +76,8 @@ async def skip(ctx: commands.context.Context, count: int = 1):
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
-        try:
-            queue.skip(ctx.message.author.voice.channel.id, count)
-            ctx.voice_client.stop()
-        except asyncio.QueueEmpty:
-            ctx.voice_client.stop()
-            await ctx.voice_client.disconnect()
+        queue.skip(ctx.message.author.voice.channel.id, count)
+        ctx.voice_client.stop()
     else:
         await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
@@ -93,11 +89,7 @@ async def repeat(ctx: commands.context.Context):
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
-        try:
-            queue.switch_repeat(ctx.message.author.voice.channel.id)
-        except asyncio.QueueEmpty:
-            ctx.voice_client.stop()
-            await ctx.voice_client.disconnect()
+        queue.switch_repeat(ctx.message.author.voice.channel.id)
     else:
         await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
@@ -109,18 +101,14 @@ async def queue(ctx: commands.context.Context):
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
-        try:
-            async with ctx.typing():
-                titles = ':coffee: Current queue :coffee: :\n'
-                res = queue.show_queue(ctx.message.author.voice.channel.id)
-                if not res:
-                    await ctx.send(':anger: :japanese_goblin:**One song is not enought for queue** :anger:')
-                    return
-                titles += res
-                await ctx.send(f'**{titles}**')
-        except asyncio.QueueEmpty:
-            ctx.voice_client.stop()
-            await ctx.voice_client.disconnect()
+        async with ctx.typing():
+            titles = ':coffee: Current queue :coffee: :\n'
+            res = queue.show_queue(ctx.message.author.voice.channel.id)
+            if not res:
+                await ctx.send(':anger: :japanese_goblin:**One song is not enought for queue** :anger:')
+                return
+            titles += res
+            await ctx.send(f'**{titles}**')
     else:
         await ctx.send(f'**{ctx.message.author.name}** i`m not even in voice channel! :kissing_heart: ')
 
