@@ -29,9 +29,17 @@ ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
 class YoutubePlayer(BasePlayer):
+    def __init__(self, data: dict):
+        self.start_time = data.get('start_time', 0)
+        super().__init__(data)
+
     def play(self) -> discord.PCMVolumeTransformer:
         return self._play(
-            discord.FFmpegPCMAudio(self.url, **ffmpeg_options),
+            discord.FFmpegPCMAudio(
+                self.url,
+                **ffmpeg_options,
+                before_options=f'-ss {self.start_time}'
+            ),
             volume=1
         )
 
