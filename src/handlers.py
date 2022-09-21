@@ -2,6 +2,7 @@ import asyncio
 
 from discord import VoiceChannel
 from discord.ext import commands
+from src.decorators import voice_required
 
 from src.queue import MuzlagQueue
 from src.players import player_factory
@@ -13,11 +14,8 @@ async def ping(ctx: commands.context.Context):
 
 
 @commands.command(name='play', help='Play song by link or add to queue')
+@voice_required
 async def play(ctx: commands.context.Context, url: str):
-    if not ctx.message.author.voice:
-        await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
-        return
-
     channel: VoiceChannel = ctx.message.author.voice.channel
     queue = MuzlagQueue()
     player = player_factory(url)
@@ -55,9 +53,10 @@ async def play(ctx: commands.context.Context, url: str):
 
 
 @commands.command(name='stop', help='Stop all songs in queue')
+@voice_required
 async def stop(ctx: commands.context.Context):
     queue = MuzlagQueue()
-    if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
+    if ctx.message.author.voice.channel.id not in queue:
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
@@ -70,9 +69,10 @@ async def stop(ctx: commands.context.Context):
 
 
 @commands.command(name='skip', help='Skip current song (default) or several songs')
+@voice_required
 async def skip(ctx: commands.context.Context, count: int = 1):
     queue = MuzlagQueue()
-    if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
+    if ctx.message.author.voice.channel.id not in queue:
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
@@ -83,9 +83,10 @@ async def skip(ctx: commands.context.Context, count: int = 1):
 
 
 @commands.command(name='repeat', help='Set song to repeat')
+@voice_required
 async def repeat(ctx: commands.context.Context):
     queue = MuzlagQueue()
-    if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
+    if ctx.message.author.voice.channel.id not in queue:
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
@@ -95,9 +96,10 @@ async def repeat(ctx: commands.context.Context):
 
 
 @commands.command(name='queue', help='Show songs queue')
+@voice_required
 async def queue(ctx: commands.context.Context):
     queue = MuzlagQueue()
-    if not ctx.message.author.voice or ctx.message.author.voice.channel.id not in queue:
+    if ctx.message.author.voice.channel.id not in queue:
         await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
         return
     if ctx.voice_client.is_connected():
