@@ -2,7 +2,7 @@ import os
 import json
 import logging.config
 
-from src.config import BASE_PATH
+from bot.config import BASE_PATH
 
 
 def setup_logging():

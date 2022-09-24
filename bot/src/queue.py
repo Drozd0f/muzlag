@@ -4,7 +4,7 @@ import typing as t
 from asyncio import Queue, QueueEmpty
 from collections import deque
 
-from src.players.base import BasePlayer
+from bot.src.players.base import BasePlayer
 
 
 class ModQueue(Queue):
