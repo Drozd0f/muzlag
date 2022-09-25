@@ -3,7 +3,7 @@ from __future__ import annotations
 import youtube_dl
 import discord
 
-from src.players.base import BasePlayer
+from bot.src.players.base import BasePlayer
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 

@@ -14,6 +14,7 @@
 > **Note**
 > First of all create .env file with next variables
 ```
+PREFIX=BOT_PREFIX
 TOKEN=BOT_TOKEN
 ENV='dev'/'prod'
 ```

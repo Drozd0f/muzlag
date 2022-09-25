@@ -1,5 +1,5 @@
-from src.players.youtube import YoutubePlayer
-from src.players.base import BasePlayer
+from bot.src.players.base import BasePlayer
+from bot.src.players.youtube import YoutubePlayer
 
 players = {
     'youtu': YoutubePlayer
