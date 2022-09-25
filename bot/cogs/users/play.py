@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from discord import VoiceChannel
-from discord.ext import commands
+from nextcord import VoiceChannel
+from nextcord.ext import commands
 
 from bot.src.queue import MuzlagQueue
 from bot.src.decorators import voice_required

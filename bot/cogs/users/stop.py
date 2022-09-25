@@ -1,6 +1,6 @@
 import asyncio
 
-from discord.ext import commands
+from nextcord.ext import commands
 
 from bot.src.queue import MuzlagQueue
 from bot.src.decorators import voice_required

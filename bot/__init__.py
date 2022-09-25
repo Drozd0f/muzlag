@@ -1,6 +1,7 @@
 import logging
 
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 
 from bot.cogs import register_all_cogs
 from bot.config import Config
@@ -9,11 +10,15 @@ from bot.src.log import setup_logging
 
 log = logging.getLogger(__name__)
 
+intents = nextcord.Intents.default()
+intents.message_content = True
+
 BOT = commands.Bot(
     command_prefix=Config.prefix,
     help_command=commands.DefaultHelpCommand(
         no_category='Commands'
-    )
+    ),
+    intents=intents
 )
 
 

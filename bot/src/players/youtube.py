@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import youtube_dl
-import discord
+import nextcord
 
 from bot.src.players.base import BasePlayer
 
@@ -33,9 +33,9 @@ class YoutubePlayer(BasePlayer):
         self.start_time = data.get('start_time', 0)
         super().__init__(data)
 
-    def play(self) -> discord.PCMVolumeTransformer:
+    def play(self) -> nextcord.PCMVolumeTransformer:
         return self._play(
-            discord.FFmpegPCMAudio(
+            nextcord.FFmpegPCMAudio(
                 self.url,
                 **ffmpeg_options,
                 before_options=f'-ss {self.start_time}'

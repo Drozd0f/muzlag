@@ -1,6 +1,4 @@
-import logging
-
-from discord.ext import commands
+from nextcord.ext import commands
 
 from bot.cogs.users import play
 
@@ -36,6 +34,3 @@ def register_cogs(bot: commands.Bot):
     bot.add_command(nikita)
     bot.add_command(vadick)
     bot.add_command(vadoom)
-
-    for command in bot.commands:
-        logging.info(f"easter egg command --> {command}")
