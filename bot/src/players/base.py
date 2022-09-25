@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod, abstractclassmethod
 
-import discord
+import nextcord
 
 
 class BasePlayer:
@@ -12,11 +12,11 @@ class BasePlayer:
         self.url = data.get('url')
 
     @staticmethod
-    def _play(source: discord.FFmpegPCMAudio, volume: float):
-        return discord.PCMVolumeTransformer(source, volume)
+    def _play(source: nextcord.FFmpegPCMAudio, volume: float):
+        return nextcord.PCMVolumeTransformer(source, volume)
 
     @abstractmethod
-    def play(self) -> discord.PCMVolumeTransformer:
+    def play(self) -> nextcord.PCMVolumeTransformer:
         raise NotImplementedError
 
     @abstractclassmethod
