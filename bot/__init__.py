@@ -5,6 +5,7 @@ import nextcord
 from nextcord.ext import commands
 
 from bot.cogs import register_all_cogs
+from bot.events import register_all_events
 from bot.config import Config
 from bot.database.migrations import Migrator
 from bot.src.log import setup_logging
@@ -29,6 +30,9 @@ def start_bot():
 
     log.info("setuping cogs...")
     register_all_cogs(BOT)
+
+    log.info("setuping events...")
+    register_all_events(BOT)
 
     log.info("running bot...")
     BOT.run(Config.token)

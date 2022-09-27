@@ -17,6 +17,8 @@ class Config:
     base_dir = Path(__file__).parent.parent.resolve()
     env = Envs(os.getenv('ENV')).value
     playlist_limit = 5
+    query_len = int(os.getenv('YT_QUERY_LEN'))
+    result_len = int(os.getenv('SRCH_RES_LEN'))
     max_desk_len = 100
 
 
@@ -27,3 +29,5 @@ class DBConfig:
     database_dir = f'{Config.base_dir}/bot/database'
     queries_dir = f'{database_dir}/queries'
     migrations_dir = f'{database_dir}/migrations'
+    query_len = int(os.getenv('YT_QUERY_LEN'))
+    result_len = int(os.getenv('SRCH_RES_LEN'))
