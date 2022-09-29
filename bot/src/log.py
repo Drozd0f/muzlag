@@ -1,11 +1,10 @@
-import os
 import json
 import logging.config
 
-from bot.config import BASE_PATH
+from bot.config import Config
 
 
 def setup_logging():
-    with open(BASE_PATH / "conf" / os.getenv('ENV') / "logging.json", "r") as f:
+    with open(Config.base_dir / "conf" / Config.env / "logging.json", "r") as f:
         conf = json.load(f)
     logging.config.dictConfig(conf)

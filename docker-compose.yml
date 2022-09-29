@@ -1,14 +1,16 @@
-version: '3.4'
+version: '3.9'
 
 services:
   muzlag:
-    command: bash -c "python3 /muzlag/main.py"
-    restart: always
     volumes:
       - .:/muzlag
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
+      target: dev
+    depends_on:
+      db:
+        condition: service_healthy
     env_file:
       - .env
     environment:
