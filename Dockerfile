@@ -7,4 +7,4 @@ COPY . .
 
 FROM base as dev
 RUN pip install jurigged
-CMD jurigged -v main.py
+CMD jurigged -v run.py
