@@ -1,6 +1,6 @@
 import nextcord
 
-from bot.src import Emoji
+from bot.src.emoji import Emoji
 
 
 class Cancel(nextcord.ui.Button):

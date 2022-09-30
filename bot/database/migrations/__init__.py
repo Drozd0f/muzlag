@@ -1,9 +1,10 @@
-import aiosqlite
-from sqlite3 import OperationalError
 import logging
 import re
 import typing as t
 from pathlib import Path
+from sqlite3 import OperationalError
+
+import aiosqlite
 
 from bot.database import get_query
 from bot.config import DBConfig
@@ -17,12 +18,10 @@ class Migrator:
     async def _create_scheme(cls):
         async with aiosqlite.connect(DBConfig.path) as db:
             await db.executescript(get_query(DBConfig.migrations_dir, 'create_scheme.up'))
-            await db.commit()
 
         if await cls._get_current_version() is None:
             async with aiosqlite.connect(DBConfig.path) as db:
                 await db.executescript(get_query(DBConfig.queries_dir, 'create_base_migration_value'))
-                await db.commit()
 
     @staticmethod
     def _get_migration_paths() -> list[Path]:
@@ -39,7 +38,6 @@ class Migrator:
                 get_query(DBConfig.queries_dir, 'get_current_version_migrations')
             )
             res = await cursor.fetchone()
-            await cursor.close()
         if res:
             return res[0]
 

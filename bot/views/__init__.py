@@ -4,6 +4,7 @@ import nextcord
 
 
 class BaseView(nextcord.ui.View):
+    member_content: str
     _base_content: t.Optional[str] = None
 
     def __init__(self, member: nextcord.Member, timeout: t.Optional[float] = 60):
@@ -31,12 +32,12 @@ class BaseView(nextcord.ui.View):
             child.disabled = disabled
 
     @property
-    def base_content(self) -> t.Optional[str]:
-        return self._base_content
+    def base_content(self) -> str:
+        return self._base_content if self._base_content else self.member_content
 
     @base_content.setter
     def base_content(self, content: str):
-        self._base_content = content
+        self._base_content = f'{self.member_content}\n{content}'
 
     @property
     def tag_member(self) -> str:

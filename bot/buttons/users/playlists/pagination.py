@@ -1,6 +1,6 @@
 import nextcord
 
-from bot.src import PaginationEmoji
+from bot.src.emoji import PaginationEmoji
 
 
 class ArrowLeft(nextcord.ui.Button):
@@ -12,8 +12,7 @@ class ArrowLeft(nextcord.ui.Button):
         self.disabled = disabled
 
     async def callback(self, interaction: nextcord.Interaction):
-        page = self.view.page - 1
-        self.view.page = max(page, 1)
+        self.view.page = max(self.view.page - 1, 1)
         await self.view.refresh_view()
         await interaction.response.edit_message(
             content=self.view.content_on_page,
@@ -33,8 +32,7 @@ class ArrowRight(nextcord.ui.Button):
         self.disabled = disabled
 
     async def callback(self, interaction: nextcord.Interaction):
-        page = self.view.page + 1
-        self.view.page = min(page, self.view.count_page)
+        self.view.page = min(self.view.page + 1, self.view.count_page)
         await self.view.refresh_view()
         await interaction.response.edit_message(
             content=self.view.content_on_page,

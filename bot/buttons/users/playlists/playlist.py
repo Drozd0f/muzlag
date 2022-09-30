@@ -3,10 +3,10 @@ import asyncio
 import nextcord
 from nextcord import Message
 
-from bot.src import Emoji
+from bot.src.emoji import Emoji, CenterEmoji
 from bot.src.yt_search import YoutubeSearch
 from bot import database
-from bot.database.errors.playlist import SongInPlaylistExists
+from bot.errors.playlist import SongInPlaylistExists
 from bot.errors.yt_search import URLNotValid
 
 
@@ -27,7 +27,6 @@ class AddSong(nextcord.ui.Button):
         save_button = Save(self)
         self.disabled = True
         self.emoji = Emoji.loading
-        self.view.remove_pagination()
         self.view.insert_item(1, save_button)
         self.view.remove_pagination()
 
@@ -61,7 +60,7 @@ class Save(nextcord.ui.Button):
         super().__init__(
             label='Save',
             style=nextcord.ButtonStyle.green,
-            emoji=Emoji.sad_cat_thumb_sup
+            emoji=CenterEmoji.chika
         )
         self.disable_button = disable_button
         self.disable_emoji = disable_button.emoji
@@ -80,7 +79,7 @@ class Play(nextcord.ui.Button):
         super().__init__(
             label='Play',
             style=nextcord.ButtonStyle.green,
-            emoji=Emoji.yes
+            emoji=CenterEmoji.rem_dance
         )
 
     async def callback(self, interaction: nextcord.Interaction):

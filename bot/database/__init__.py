@@ -1,15 +1,16 @@
-import aiosqlite
 import logging
 import typing as t
 from sqlite3 import IntegrityError
 
+import aiosqlite
 from nextcord import Member
 
 from bot.config import DBConfig
 from bot.src.yt_search import YoutubeSearch
+from bot.errors.playlist import PlaylistNameExists, SongInPlaylistExists
 from bot.database.models.playlist import PlaylistModel
 from bot.database.models.songs import SongModel
-from bot.database.errors.playlist import PlaylistNameExists, SongInPlaylistExists
+from bot.database.models.paginator import PaginatorModel
 
 
 log = logging.getLogger(__name__)
@@ -34,7 +35,6 @@ async def create_playlist(member: Member, playlist_name: str) -> t.Optional[Play
                 }
             )
             row = await cursor.fetchone()
-            await cursor.close()
             await db.commit()
         except IntegrityError as exc:
             logging.error(exc)
@@ -63,14 +63,14 @@ async def create_song(yt_search: YoutubeSearch) -> SongModel:
     )
 
 
-async def get_member_playlists(member: Member, page: int, limit: int) -> t.Optional[t.List[PlaylistModel]]:
+async def get_member_playlists(member: Member, paginator: PaginatorModel) -> t.Optional[t.List[PlaylistModel]]:
     async with aiosqlite.connect(DBConfig.path) as db:
         cursor = await db.execute(
             get_query(DBConfig.queries_dir, 'get_member_playlists'),
             {
                 'member_id': member.id,
-                'page': (page - 1) * limit,
-                'limit': limit
+                'offset': paginator.offset,
+                'limit': paginator.limit
             }
         )
         rows = await cursor.fetchall()
@@ -87,17 +87,16 @@ async def get_member_count_playlists(member: Member) -> int:
             }
         )
         count, = await cursor.fetchone()
-        await cursor.close()
     return count
 
 
-async def get_all_playlists(page: int, limit: int) -> t.Optional[t.List[PlaylistModel]]:
+async def get_all_playlists(paginator: PaginatorModel) -> t.Optional[t.List[PlaylistModel]]:
     async with aiosqlite.connect(DBConfig.path) as db:
         cursor = await db.execute(
             get_query(DBConfig.queries_dir, 'get_all_playlists'),
             {
-                'page': (page - 1) * limit,
-                'limit': limit
+                'offset': paginator.offset,
+                'limit': paginator.limit
             }
         )
         rows = await cursor.fetchall()
@@ -111,23 +110,22 @@ async def get_count_playlists() -> int:
             get_query(DBConfig.queries_dir, 'get_count_playlists'),
         )
         count, = await cursor.fetchone()
-        await cursor.close()
     return count
 
 
-async def get_playlist_songs(playlist: PlaylistModel, page: int, limit: int) -> t.Optional[t.List[str]]:
+async def get_playlist_songs(playlist: PlaylistModel, paginator: PaginatorModel) -> t.Optional[t.List[SongModel]]:
     async with aiosqlite.connect(DBConfig.path) as db:
         cursor = await db.execute(
             get_query(DBConfig.queries_dir, 'get_playlist_songs'),
             {
                 'playlist_id': playlist.playlist_id,
-                'page': (page - 1) * limit,
-                'limit': limit
+                'offset': paginator.offset,
+                'limit': paginator.limit
             }
         )
         rows = await cursor.fetchall()
     if rows is not None:
-        return [row[0] for row in rows]
+        return [SongModel(*row) for row in rows]
 
 
 async def get_song_in_playlist(playlist: PlaylistModel, song: SongModel) -> SongModel:
@@ -153,7 +151,6 @@ async def get_count_songs_in_playlists(playlist: PlaylistModel) -> int:
             }
         )
         count, = await cursor.fetchone()
-        await cursor.close()
     return count
 
 

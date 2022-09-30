@@ -14,6 +14,20 @@ class Emoji:
 
 
 @dataclass
+class CenterEmoji:
+    rem_dance = '<a:rem_dance:1025461780543189042>'
+    animeeyes = '<a:animeeyes:1025463582051278909>'
+    nezuka = '<a:nezuka:1025463620492075058>'
+    nqnm = '<a:nqnm:1025463852458053642>'
+    chika = '<a:anime:1025463750926553149>'
+    anime_dance = '<a:anime_dance:1025463771113725962>'
+    animerain = '<a:animerain:1025463709046407209>'
+    ghubujii = '<a:ghubujii:1025463833730486413>'
+    javidance = '<a:javidance:1025463813266477216>'
+    animeahhh = '<a:animeahhh:1025463792609542225>'
+
+
+@dataclass
 class PaginationEmoji:
     arrow_right = '\U000025b6'
     arrow_left = '\U000025c0'

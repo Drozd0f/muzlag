@@ -1,3 +1,3 @@
 SELECT *
 FROM playlists
-LIMIT :limit OFFSET :page;
+LIMIT :limit OFFSET :offset;
