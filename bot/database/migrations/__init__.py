@@ -16,12 +16,16 @@ log = logging.getLogger(__name__)
 class Migrator:
     @classmethod
     async def _create_scheme(cls):
-        async with aiosqlite.connect(DBConfig.path) as db:
-            await db.executescript(get_query(DBConfig.migrations_dir, 'create_scheme.up'))
+        async with aiosqlite.connect(DBConfig.path) as conn:
+            cursor = await conn.cursor()
+            await cursor.executescript(get_query(DBConfig.migrations_dir, 'create_scheme.up'))
+            await cursor.close()
 
         if await cls._get_current_version() is None:
-            async with aiosqlite.connect(DBConfig.path) as db:
-                await db.executescript(get_query(DBConfig.queries_dir, 'create_base_migration_value'))
+            async with aiosqlite.connect(DBConfig.path) as conn:
+                cursor = await conn.cursor()
+                await cursor.executescript(get_query(DBConfig.queries_dir, 'create_base_migration_value'))
+                await cursor.close()
 
     @staticmethod
     def _get_migration_paths() -> list[Path]:
@@ -33,40 +37,45 @@ class Migrator:
 
     @staticmethod
     async def _get_current_version() -> t.Optional[int]:
-        async with aiosqlite.connect(DBConfig.path) as db:
-            cursor = await db.execute(
+        async with aiosqlite.connect(DBConfig.path) as conn:
+            cursor = await conn.cursor()
+            await cursor.execute(
                 get_query(DBConfig.queries_dir, 'get_current_version_migrations')
             )
             res = await cursor.fetchone()
+            await cursor.close()
         if res:
             return res[0]
 
     @staticmethod
     async def _apply_migration(migration_name: str):
-        async with aiosqlite.connect(DBConfig.path) as db:
-            db.isolation_level = None
-            await db.execute('BEGIN')
+        async with aiosqlite.connect(DBConfig.path) as conn:
+            cursor = await conn.cursor()
+            await cursor.execute('BEGIN')
             queries = get_query(DBConfig.migrations_dir, migration_name).split(';')
             try:
                 for query in queries:
-                    await db.execute(query)
-                await db.execute('COMMIT')
+                    await cursor.execute(query)
+                await cursor.execute('COMMIT')
             except OperationalError as exc:
-                await db.execute('ROLLBACK')
+                await cursor.execute('ROLLBACK')
                 logging.error(exc)
                 raise exc
+            await cursor.close()
 
     @staticmethod
     async def _update_migration_schema(current_version: int, is_dirt: bool):
-        async with aiosqlite.connect(DBConfig.path) as db:
-            await db.execute(
+        async with aiosqlite.connect(DBConfig.path) as conn:
+            cursor = await conn.cursor()
+            await cursor.execute(
                 get_query(DBConfig.queries_dir, 'update_migration_schema'),
                 {
                     'current_version': current_version,
                     'is_dirt': is_dirt
                 }
             )
-            await db.commit()
+            await conn.commit()
+            await cursor.close()
 
     @classmethod
     async def start(cls):
