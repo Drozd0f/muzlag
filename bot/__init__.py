@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import nextcord
@@ -5,6 +6,7 @@ from nextcord.ext import commands
 
 from bot.cogs import register_all_cogs
 from bot.config import Config
+from bot.database.migrations import Migrator
 from bot.src.log import setup_logging
 
 
@@ -24,6 +26,9 @@ BOT = commands.Bot(
 
 def start_bot():
     setup_logging()
+
+    log.info("applying migrations...")
+    asyncio.run(Migrator.start())
 
     log.info("setuping cogs...")
     register_all_cogs(BOT)

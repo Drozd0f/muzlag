@@ -7,7 +7,6 @@ import nextcord
 
 class BasePlayer:
     def __init__(self, data: dict):
-        self.data = data
         self.title = data.get('title')
         self.url = data.get('url')
 
