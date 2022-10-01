@@ -77,16 +77,14 @@ class PlaylistsView(BaseView):
             playlists = await database.get_member_playlists(member, PaginatorModel(page=1))
             count_playlists = await database.get_member_count_playlists(member)
             base_content = 'Your playlists'
-            is_personal = False
         else:
             playlists = await database.get_all_playlists(PaginatorModel(page=1))
             count_playlists = await database.get_count_playlists()
             base_content = 'All playlists'
-            is_personal = True
 
         if playlists is not None:
             self = cls(member, member_content, playlists, count_playlists)
-            self.is_personal = is_personal
+            self.is_personal = member_playlists
             self.base_content = base_content
             self.refresh_playlists_on_page(playlists)
             return self
