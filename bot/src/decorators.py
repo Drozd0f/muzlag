@@ -6,5 +6,5 @@ def voice_required(cog):
         if not ctx.message.author.voice:
             await ctx.send(f'**{ctx.message.author.name}** from where you sad that? :thinking: ')
             return
-        return await cog(ctx, *args, **kwargs)
+        await cog(ctx, *args, **kwargs)
     return wrapped

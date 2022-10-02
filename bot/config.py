@@ -17,6 +17,7 @@ class Config:
     base_dir = Path(__file__).parent.parent.resolve()
     env = Envs(os.getenv('ENV')).value
     playlist_limit = 5
+    max_desk_len = 100
 
 
 @dataclass

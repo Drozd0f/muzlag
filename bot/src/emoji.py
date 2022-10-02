@@ -31,3 +31,10 @@ class CenterEmoji:
 class PaginationEmoji:
     arrow_right = '\U000025b6'
     arrow_left = '\U000025c0'
+
+
+@dataclass
+class HelpEmoji:
+    help_ = '<:thrinking:597590667669274651>'
+    home = '<a:rooSnap:741590910361403454>'
+    ping = '<:blobpats:596576796594667521>'

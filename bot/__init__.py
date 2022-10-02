@@ -17,9 +17,6 @@ intents.message_content = True
 
 BOT = commands.Bot(
     command_prefix=Config.prefix,
-    help_command=commands.DefaultHelpCommand(
-        no_category='Commands'
-    ),
     intents=intents
 )
 
