@@ -17,4 +17,6 @@ CREATE TABLE IF NOT EXISTS songs_playlists(
     song_id VARCHAR(255) REFERENCES songs(id)
 );
 
+CREATE INDEX playlists_name ON playlists(name);
+
 CREATE INDEX songs_playlists_idx ON songs_playlists(song_id, playlist_id);
