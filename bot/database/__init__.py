@@ -35,14 +35,13 @@ async def create_playlist(member: Member, playlist_name: str) -> t.Optional[Play
                     'name': playlist_name
                 }
             )
-            row = await cursor.fetchone()
             await conn.commit()
+            playlist = await get_playlist(playlist_name)
             await cursor.close()
         except IntegrityError as exc:
             logging.error(exc)
             raise PlaylistNameExists
-    if row is not None:
-        return PlaylistModel(*row)
+    return playlist
 
 
 async def create_song(yt_search: YoutubeSearch) -> SongModel:
@@ -65,6 +64,22 @@ async def create_song(yt_search: YoutubeSearch) -> SongModel:
         url=yt_search.url,
         start_time=yt_search.start_time
     )
+
+
+async def get_playlist(playlist_name: str) -> t.Optional[PlaylistModel]:
+    async with aiosqlite.connect(DBConfig.path) as conn:
+        cursor = await conn.cursor()
+        await cursor.execute(
+            get_query(DBConfig.queries_dir, 'get_playlist'),
+            {
+                'name': playlist_name
+            }
+        )
+        row = await cursor.fetchone()
+        await conn.commit()
+        await cursor.close()
+    if row:
+        return PlaylistModel(*row)
 
 
 async def get_member_playlists(member: Member, paginator: PaginatorModel) -> t.Optional[t.List[PlaylistModel]]:
