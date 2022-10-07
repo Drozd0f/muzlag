@@ -4,7 +4,6 @@ from bot.src.queue import MuzlagQueue
 from bot.src.decorators import voice_required
 
 
-@commands.command(name='skip', help='Skip current song (default) or several songs')
 @voice_required
 async def skip(ctx: commands.context.Context, count: int = 1):
     queue = MuzlagQueue()

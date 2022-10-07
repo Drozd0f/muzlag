@@ -4,7 +4,6 @@ from bot.src.queue import MuzlagQueue
 from bot.src.decorators import voice_required
 
 
-@commands.command(name='queue', help='Show songs queue')
 @voice_required
 async def queue(ctx: commands.context.Context):
     queue = MuzlagQueue()

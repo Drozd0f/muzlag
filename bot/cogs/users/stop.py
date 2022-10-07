@@ -6,7 +6,6 @@ from bot.src.queue import MuzlagQueue
 from bot.src.decorators import voice_required
 
 
-@commands.command(name='stop', help='Stop all songs in queue')
 @voice_required
 async def stop(ctx: commands.context.Context):
     queue = MuzlagQueue()

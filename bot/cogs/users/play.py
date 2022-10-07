@@ -14,7 +14,6 @@ def logging_player_error(error):
         logging.error(f'Player error: {error}')
 
 
-@commands.command(name='play', help='Play song by link or add to queue')
 @voice_required
 async def play(ctx: commands.context.Context, url: str):
     channel: VoiceChannel = ctx.message.author.voice.channel

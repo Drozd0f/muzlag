@@ -1,6 +1,6 @@
 from nextcord.ext import commands
 
-from bot.cogs.users import play
+from bot.cogs.users.play import play
 
 
 @commands.command(name='danilo', help='Play Danilo song', hidden=True)
