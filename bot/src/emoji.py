@@ -38,3 +38,9 @@ class HelpEmoji:
     help_ = '<:thrinking:597590667669274651>'
     home = '<a:rooSnap:741590910361403454>'
     ping = '<:blobpats:596576796594667521>'
+
+
+@dataclass
+class DefaultEmoji:
+    anger = ':anger:'
+    scream_cat = ':scream_cat:'

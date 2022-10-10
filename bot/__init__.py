@@ -25,14 +25,14 @@ BOT = commands.Bot(
 def start_bot():
     setup_logging()
 
-    log.info("applying migrations...")
+    log.info('applying migrations...')
     asyncio.run(Migrator.start())
 
-    log.info("setuping cogs...")
+    log.info('setuping cogs...')
     register_all_cogs(BOT)
 
-    log.info("setuping events...")
+    log.info('setuping events...')
     register_all_events(BOT)
 
-    log.info("running bot...")
+    log.info('running bot...')
     BOT.run(Config.token)
