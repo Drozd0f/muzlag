@@ -28,7 +28,7 @@ class Migrator:
                 await cursor.close()
 
     @staticmethod
-    def _get_migration_paths() -> list[Path]:
+    def _get_migration_paths() -> t.List[Path]:
         return sorted(list(Path(DBConfig.migrations_dir).glob('[0-9]*_*.up.sql')))
 
     @staticmethod

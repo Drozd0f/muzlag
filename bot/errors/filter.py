@@ -1,0 +1,2 @@
+class FilterStrLenError(Exception):
+    pass

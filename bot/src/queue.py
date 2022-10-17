@@ -78,7 +78,6 @@ class MuzlagQueue:
         if channel_id not in self.__queues:
             self.drop(channel_id)
             raise QueueEmpty
-
         if count == 1:
             if self.is_repeat(channel_id):
                 self.switch_repeat(channel_id)
