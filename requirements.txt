@@ -3,3 +3,4 @@ nextcord-ext-menus==1.5.5
 discord.py[voice]
 youtube-dl==2021.12.17
 aiosqlite==0.17.0
+youtube-search-python==1.6.6

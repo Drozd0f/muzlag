@@ -30,7 +30,10 @@ class YTLinks:
         video_titles = []
         video_links = []
         for idx, res in enumerate(search_result.get('result')):
-            video_titles.append(f"{idx + 1}. {res.get('title')}")
+            dur = res.get('duration')
+            if not dur:
+                dur = "Live"
+            video_titles.append(f"{idx + 1}. {res.get('title')} - {dur}")
             video_links.append(f"{res.get('link')}")
         return video_titles, video_links
 
@@ -51,7 +54,8 @@ class YTLinks:
 
     async def link_extractor(self, bot: Bot, message: Message, text: str) -> t.Optional[str]:
         titles, links = self.yt_search(text, Config.result_len)
-        choice_dialog = f'Type num of the song 1-{Config.result_len} (example: 2) \n' + '\n'.join(titles)
+        choice_dialog = f'Type num of the song 1-{Config.result_len} (example: 2) or type some shit to abort\n'
+        +'\n'.join(titles)
         await message.channel.send(choice_dialog)
 
         def is_author(msg):
