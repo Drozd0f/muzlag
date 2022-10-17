@@ -40,14 +40,14 @@ class YTLinks:
     async def filter(self, bot: Bot, message: Message) -> t.Optional[str]:
         command, *text = message.content.split()
         text = ' '.join(text)
-        if len(text) > Config.query_len:
-            raise filter.FilterStrLenError
         if re.match(self.watch_link, text):
             url = self.link_rebaser(text, self.watch_link)
         elif re.match(self.shorts_link, text):
             url = self.link_rebaser(text, self.shorts_link)
         elif re.match(self.base_link, text):
             url = text
+        elif len(text) > Config.query_len:
+            raise filter.FilterStrLenError
         else:
             url = await self.link_extractor(bot, message, text)
         return f'{command} {url}'
