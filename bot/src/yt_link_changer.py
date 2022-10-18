@@ -31,10 +31,12 @@ class YTLinks:
         video_links = []
         for idx, res in enumerate(search_result.get('result')):
             dur = res.get('duration')
+            title = res.get('title')
+            content = f'{idx + 1}. {title}'[:Config.len_video_titles]
             if not dur:
-                dur = "Live"
-            video_titles.append(f"{idx + 1}. {res.get('title')} - {dur}")
-            video_links.append(f"{res.get('link')}")
+                dur = 'Live'
+            video_titles.append(f'{content.ljust(Config.len_video_titles)} {dur}')
+            video_links.append(res.get('link'))
         return video_titles, video_links
 
     async def filter(self, bot: Bot, message: Message) -> t.Optional[str]:
@@ -54,9 +56,9 @@ class YTLinks:
 
     async def link_extractor(self, bot: Bot, message: Message, text: str) -> t.Optional[str]:
         titles, links = self.yt_search(text, Config.result_len)
-        choice_dialog = f'Type num of the song 1-{Config.result_len} (example: 2) or type some shit to abort\n'
-        +'\n'.join(titles)
-        await message.channel.send(choice_dialog)
+        choice_dialog = f'Type num of the song 1-{Config.result_len} (ex.: 2) or type some shit to abort\n'+'\n'.join(
+            titles)
+        await message.channel.send(f'```{choice_dialog}```')
 
         def is_author(msg):
             return msg.author == message.author and msg.channel == message.channel
@@ -73,7 +75,7 @@ class YTLinks:
     async def get_link(message: Message, links: t.List[str], titles: t.List[str]) -> t.Optional[str]:
         num = int(message.content)
         if num in range(1, Config.result_len + 1):
-            await message.channel.send(f'You choose {num} - {titles[num-1]}:{links[num-1]}')
+            await message.channel.send(f'You choose {num} - {titles[num-1]}:\n{links[num-1]}')
             return links[num-1]
         await message.channel.send(
             f'Abort! {DefaultEmoji.anger} You choose {num} - which is not valid,'
