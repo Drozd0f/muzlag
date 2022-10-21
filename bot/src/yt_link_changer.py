@@ -13,6 +13,7 @@ from bot.src.emoji import DefaultEmoji
 class YTLinks:
     watch_link = r'^https://www\.youtube\.com/watch\?v='
     shorts_link = r'^https://www\.youtube\.com/shorts/'
+    music_link = r'^https://music\.youtube\.com/watch\?v='
     base_link = r'^https://youtu\.be.*'
     base_str = 'https://youtu.be/'
 
@@ -46,6 +47,8 @@ class YTLinks:
             url = self.link_rebaser(text, self.watch_link)
         elif re.match(self.shorts_link, text):
             url = self.link_rebaser(text, self.shorts_link)
+        elif re.match(self.music_link, text):
+            url = self.link_rebaser(text, self.music_link)
         elif re.match(self.base_link, text):
             url = text
         elif len(text) > Config.query_len:
