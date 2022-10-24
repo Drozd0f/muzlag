@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 def play(bot: Bot):
     async def on_message(message: Message):
-        if message.content.startswith('?play'):
+        if message.content.startswith('?play '):
             request_proc = YTLinks()
             try:
                 content = await request_proc.filter(bot, message)
