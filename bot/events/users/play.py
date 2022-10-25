@@ -22,6 +22,8 @@ def play(bot: Bot):
                 return
             except ValueError:
                 return
+            if not content:
+                return
             message.content = content
         await bot.process_commands(message)
     return on_message

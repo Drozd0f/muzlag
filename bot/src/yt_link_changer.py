@@ -7,7 +7,7 @@ from youtubesearchpython import VideosSearch
 
 from bot.config import Config
 from bot.errors import filter
-from bot.src.emoji import DefaultEmoji
+from bot.views.users.yt_link_changer import SongChooserView
 
 
 class YTLinks:
@@ -54,33 +54,24 @@ class YTLinks:
         elif len(text) > Config.query_len:
             raise filter.FilterStrLenError
         else:
-            url = await self.link_extractor(bot, message, text)
+            links, num = await self.link_extractor(bot, message, text)
+            if num is None:
+                return
+            url = links[num]
         return f'{command} {url}'
 
-    async def link_extractor(self, bot: Bot, message: Message, text: str) -> t.Optional[str]:
+    async def link_extractor(self, bot: Bot, message: Message, text: str) -> t.Tuple[list, t.Optional[int]]:
         titles, links = self.yt_search(text, Config.result_len)
-        choice_dialog = f'Type num of the song 1-{Config.result_len} (ex.: 2) or type some shit to abort\n'+'\n'.join(
+        choice_dialog = f'Click button of the song 1-{Config.result_len} or hit cancell to abort\n'+'\n'.join(
             titles)
-        await message.channel.send(f'```{choice_dialog}```')
-
-        def is_author(msg):
-            return msg.author == message.author and msg.channel == message.channel
-        user_message = await bot.wait_for('message', check=is_author)
-        try:
-            return await self.get_link(user_message, links, titles)
-        except ValueError as exc:
-            await message.channel.send(
-                f'{user_message.content} mean that hoisting crane, but you are adopted {DefaultEmoji.scream_cat} ))'
-            )
-            raise exc
+        num = await self.song_chooser_view(message, choice_dialog)
+        return links, num
 
     @staticmethod
-    async def get_link(message: Message, links: t.List[str], titles: t.List[str]) -> t.Optional[str]:
-        num = int(message.content)
-        if num in range(1, Config.result_len + 1):
-            await message.channel.send(f'You choose {num} - {titles[num-1]}:\n{links[num-1]}')
-            return links[num-1]
-        await message.channel.send(
-            f'Abort! {DefaultEmoji.anger} You choose {num} - which is not valid,'
-            f'type number only in range(1-{Config.result_len}) {DefaultEmoji.anger}'
-        )
+    async def _song_chooser_view(message: Message, choice_dialog: str) -> int:
+        view = SongChooserView(member=message.author)
+        choice_dialog = f'```{choice_dialog}```'
+        msg = await message.channel.send(choice_dialog, view=view)
+        await view.wait()
+        await msg.delete(delay=2)
+        return view.chosen_song

@@ -44,3 +44,12 @@ class HelpEmoji:
 class DefaultEmoji:
     anger = ':anger:'
     scream_cat = ':scream_cat:'
+    keycap = '\u20E3'
+    zero_number = 0x0030
+
+    @classmethod
+    def gen_num_emoji(cls, count: int):
+        if count < 1 and count > 9:
+            return
+        for num in range(1, count + 1):
+            yield f'{chr(cls.zero_number + num)}{cls.keycap}'

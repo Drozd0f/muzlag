@@ -3,6 +3,7 @@ import logging
 
 from nextcord import VoiceChannel
 from nextcord.ext import commands
+from youtube_dl import DownloadError
 
 from bot.src.queue import MuzlagQueue
 from bot.src.decorators import voice_required
@@ -18,7 +19,11 @@ def logging_player_error(error):
 async def play(ctx: commands.context.Context, url: str):
     channel: VoiceChannel = ctx.message.author.voice.channel
     queue = MuzlagQueue()
-    player = player_factory(url)
+    try:
+        player = player_factory(url)
+    except DownloadError:
+        await ctx.send(f'This video may be inappropriate for some users.\n{url}')
+        return
     await queue.push(channel.id, player)
     await ctx.send(f':white_check_mark: Added to playback :ok:: **{player.title}**')
 
