@@ -64,7 +64,7 @@ class YTLinks:
         titles, links = self.yt_search(text, Config.result_len)
         choice_dialog = f'Click button of the song 1-{Config.result_len} or hit cancell to abort\n'+'\n'.join(
             titles)
-        num = await self.song_chooser_view(message, choice_dialog)
+        num = await self._song_chooser_view(message, choice_dialog)
         return links, num
 
     @staticmethod
