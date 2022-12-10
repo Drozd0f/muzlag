@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import typing as t
 
 import nextcord
 from nextcord import VoiceChannel
@@ -69,7 +70,7 @@ async def s_play(interaction: nextcord.Interaction, url: str):
 
     await channel.connect()
 
-    voice_client = nextcord.utils.get(
+    voice_client: t.Optional[nextcord.utils.T] = nextcord.utils.get(
         interaction.client.voice_clients,
         guild=interaction.guild
     )
