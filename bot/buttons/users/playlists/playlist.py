@@ -1,7 +1,13 @@
 import asyncio
+import logging
 
 import nextcord
 from nextcord import Message
+from nextcord.errors import NotFound
+
+from bot.src.queue import MuzlagQueue
+from bot.src.players import player_factory
+from bot.cogs.users.player.play import play_with_interaction
 
 from bot.src.emoji import Emoji, CenterEmoji
 from bot.src.yt_search import YoutubeSearch
@@ -9,13 +15,16 @@ from bot import database
 from bot.errors.playlist import SongInPlaylistExists
 from bot.errors.yt_search import URLNotValid
 
+log = logging.getLogger(__name__)
+
 
 class AddSong(nextcord.ui.Button):
-    def __init__(self):
+    def __init__(self, disabled=False):
         super().__init__(
             label='Add song',
             style=nextcord.ButtonStyle.grey,
-            emoji=Emoji.squirtle_hype
+            emoji=Emoji.squirtle_hype,
+            disabled=disabled,
         )
         self.save = False
 
@@ -83,7 +92,26 @@ class Play(nextcord.ui.Button):
         )
 
     async def callback(self, interaction: nextcord.Interaction):
-        await interaction.send(content='I\'m playing playlist', delete_after=3)
+        channel_id = interaction.user.voice.channel.id
+        songs = await database.get_all_songs_from_playlist(self.view.playlist)
+        queue = MuzlagQueue()
+
+        for song in songs:
+            await queue.push(channel_id, player_factory(song.url))
+
+        try:
+            self.disabled = True
+            await interaction.response.edit_message(content=self.view.content_on_page, view=self.view)
+
+            await play_with_interaction(queue, interaction)
+
+            self.disabled = False
+            await interaction.edit_original_message(content=self.view.content_on_page, view=self.view)
+        except NotFound as exc:
+            log.error(exc)
+            await interaction.send(
+                f'The problem of deleting {self.view.tag_member} message, try again!', delete_after=3
+            )
 
     def remove_button(self):
         self.view.remove_item(self)

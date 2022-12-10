@@ -52,7 +52,7 @@ async def create_song(yt_search: YoutubeSearch) -> SongModel:
             {
                 'video_id': yt_search.video_id,
                 'title': yt_search.title,
-                'url': yt_search.url,
+                'url': yt_search.base_url,
                 'start_time': yt_search.start_time
             }
         )
@@ -201,3 +201,17 @@ async def update_playlist(playlist: PlaylistModel, song: SongModel):
         )
         await conn.commit()
         await cursor.close()
+
+
+async def get_all_songs_from_playlist(playlist: PlaylistModel) -> list[SongModel]:
+    async with aiosqlite.connect(DBConfig.path) as conn:
+        cursor = await conn.cursor()
+        await cursor.execute(
+            get_query(DBConfig.queries_dir, 'get_all_songs_from_playlist'),
+            {
+                'playlist_id': playlist.playlist_id,
+            }
+        )
+        rows = await cursor.fetchall()
+        await cursor.close()
+    return [SongModel(*row) for row in rows]
