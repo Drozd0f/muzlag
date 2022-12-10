@@ -27,7 +27,8 @@ class YoutubeSearch:
         self.data = data
         self.video_id = data.get('id')
         self.title = data.get('title')
-        self.url = data.get('url')
+        self.url = data.get('url')  # url to download music from
+        self.base_url = data.get('base_url')  # raw unformatted url
         self.start_time = data.get('start_time', 0)
 
     @classmethod
@@ -38,4 +39,7 @@ class YoutubeSearch:
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]
+
+        data.update({'base_url': url})  # push base url for database usage
+
         return cls(data)

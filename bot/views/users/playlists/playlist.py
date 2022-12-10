@@ -21,6 +21,7 @@ class PlaylistView(BaseView):
         self.add_item(Cancel())
         self.playlist = playlist
         self.name = playlist.name
+        self.is_playlist_owner = self.member.id == playlist.member_id
         self.page = 1
         self.count_songs = count_songs
         self.limit = Config.playlist_limit
@@ -34,17 +35,19 @@ class PlaylistView(BaseView):
 
     def refresh_buttons(self):
         self.clear_items()
-        self.add_item(AddSong())
+        self.add_item(AddSong(not self.is_playlist_owner))
         self.add_item(Cancel())
+
         if self.is_paginated:
             arrow_left = ArrowLeft(self.page == 1)
             arrow_right = ArrowRight(self.page == self.count_page)
             self.insert_item(1, arrow_left)
             self.insert_item(-1, arrow_right)
-            self.insert_item(
-                len(self.children) // 2,
-                Play()
-            )
+
+        self.insert_item(
+            len(self.children) // 2,
+            Play()
+        )
 
     def refresh_song_on_page(self, songs: t.List[SongModel]):
         self.songs_on_page = ''

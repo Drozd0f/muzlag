@@ -57,14 +57,21 @@ async def c_play(ctx: commands.Context, url: str):
 @s_voice_required
 async def s_play(interaction: nextcord.Interaction, url: str):
     channel: VoiceChannel = interaction.user.voice.channel
-    voice_client = nextcord.utils.get(
-        interaction.client.voice_clients,
-        guild=interaction.guild
-    )
     queue = MuzlagQueue()
     player = player_factory(url)
     await queue.push(channel.id, player)
     await interaction.send(content=f':white_check_mark: Added to playback :ok:: **{player.title}**')
+
+    await play_with_interaction(queue, interaction)
+
+
+async def play_with_interaction(queue: MuzlagQueue, interaction: nextcord.Interaction):
+    channel: VoiceChannel = interaction.user.voice.channel
+    voice_client: t.Optional[nextcord.utils.T] = nextcord.utils.get(
+        interaction.client.voice_clients,
+        guild=interaction.guild
+    )
+
     if voice_client is not None:
         return
 
@@ -83,15 +90,17 @@ async def s_play(interaction: nextcord.Interaction, url: str):
                 after=logging_player_error
             )
             if not queue.is_repeat(channel.id):
-                await interaction.send(f':musical_note: Now playing :musical_note: : **{player.title}**')
+                await interaction.send(
+                    f':musical_note: Now playing :musical_note: : **{player.title}**', delete_after=10
+                )
 
             while voice_client.is_playing():
                 await asyncio.sleep(1)
                 vc_usr_list = channel.voice_states
                 if len(vc_usr_list) <= 1:
-                    await interaction.send(':scream_cat: No one in voice channel :anger:, leaving ...')
+                    await interaction.send(':scream_cat: No one in voice channel :anger:, leaving ...', delete_after=3)
                     queue.drop(channel.id)
         except asyncio.QueueEmpty:
             break
     await voice_client.disconnect()
-    await interaction.send('Playback stopped, bye :sleeping:')
+    await interaction.send('Playback stopped, bye :sleeping:', delete_after=3)
