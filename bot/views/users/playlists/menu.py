@@ -17,12 +17,13 @@ log = logging.getLogger(__name__)
 
 class PlaylistsMenu(BaseView):
     def __init__(self, member: nextcord.Member):
-        super().__init__(member, timeout=None)
+        super().__init__(member)
         self.member_content = f'Playlists menu for {self.tag_member}'
         self.add_item(Cancel())
 
     @nextcord.ui.button(label='Create playlist', style=nextcord.ButtonStyle.blurple, emoji=CenterEmoji.nqnm)
     async def create_playlist(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        self.refresh_timeout()
         self.set_disable_buttons(True)
         prev_emoji = button.emoji
         button.emoji = Emoji.loading
@@ -46,6 +47,7 @@ class PlaylistsMenu(BaseView):
                 content=playlist_view.base_content,
                 view=playlist_view
             )
+            self.timeout = None
             await playlist_view.wait()
         except errors.NotFound as exc:
             log.error(exc)
@@ -54,6 +56,7 @@ class PlaylistsMenu(BaseView):
             content = f'Playlist with name **{msg.content}** already exists'
             log.info(content)
             await interaction.send(content, delete_after=5)
+        self.refresh_timeout()
         await interaction.edit_original_message(
             content=self.base_content,
             view=self
@@ -61,32 +64,40 @@ class PlaylistsMenu(BaseView):
 
     @nextcord.ui.button(label='My playlists', style=nextcord.ButtonStyle.green, emoji=Emoji.crabrave)
     async def get_user_playlists(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        self.refresh_timeout()
         playlists_view = await PlaylistsView.show(self.member, self.member_content, member_playlists=True)
         if playlists_view:
             await interaction.response.edit_message(
                 content=playlists_view.content_on_page,
                 view=playlists_view
             )
+            self.timeout = None
             await playlists_view.wait()
+            self.refresh_timeout()
             await interaction.edit_original_message(
                 content=self.base_content,
                 view=self
             )
             return
+        self.refresh_timeout()
         await interaction.send(f'{self.tag_member} have\'t created playlists', delete_after=5)
 
     @nextcord.ui.button(label='All playlists', style=nextcord.ButtonStyle.grey, emoji=Emoji.feels_beats_man)
     async def get_all_playlists(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        self.refresh_timeout()
         playlists_view = await PlaylistsView.show(self.member, self.member_content)
         if playlists_view:
             await interaction.response.edit_message(
                 content=playlists_view.content_on_page,
                 view=playlists_view
             )
+            self.timeout = None
             await playlists_view.wait()
+            self.refresh_timeout()
             await interaction.edit_original_message(
                 content=self.base_content,
                 view=self
             )
             return
+        self.refresh_timeout()
         await interaction.send('No one has created a playlist', delete_after=5)

@@ -16,7 +16,7 @@ from bot.buttons.users.playlists.pagination import ArrowLeft, ArrowRight
 class PlaylistsView(BaseView):
     def __init__(self, member: nextcord.Member, member_content: str,
                  playlists: t.List[PlaylistModel], count_playlists: int):
-        super().__init__(member, timeout=None)
+        super().__init__(member)
         self.member_content = member_content
         self.is_personal = False
         self.page = 1

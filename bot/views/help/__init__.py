@@ -3,6 +3,7 @@ import typing as t
 import nextcord
 
 from bot.src.emoji import Emoji, HelpEmoji
+from bot.config import ViewConfig
 
 
 class HelpDropdown(nextcord.ui.Select):
@@ -43,7 +44,7 @@ class HelpDropdown(nextcord.ui.Select):
 class HelpView(nextcord.ui.View):
     def __init__(self, help_command,
                  options: t.List[nextcord.SelectOption],
-                 timeout: t.Optional[float] = 120.0):
+                 timeout: t.Optional[float] = ViewConfig.delete_after):
         super().__init__(timeout=timeout)
         self._help_command = help_command
         self.add_item(HelpDropdown(self._help_command, options))

@@ -14,6 +14,7 @@ class ArrowLeft(nextcord.ui.Button):
     async def callback(self, interaction: nextcord.Interaction):
         self.view.page = max(self.view.page - 1, 1)
         await self.view.refresh_view()
+        self.view.refresh_timeout()
         await interaction.response.edit_message(
             content=self.view.content_on_page,
             view=self.view
@@ -34,6 +35,7 @@ class ArrowRight(nextcord.ui.Button):
     async def callback(self, interaction: nextcord.Interaction):
         self.view.page = min(self.view.page + 1, self.view.count_page)
         await self.view.refresh_view()
+        self.view.refresh_timeout()
         await interaction.response.edit_message(
             content=self.view.content_on_page,
             view=self.view
