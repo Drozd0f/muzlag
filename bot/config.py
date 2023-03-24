@@ -21,7 +21,6 @@ class Config:
     result_len = int(os.getenv('SRCH_RES_LEN'))
     max_desk_len = 100
     len_video_titles = 42
-    voice_required_text = '**{}** from where you sad that? :thinking: '
 
 
 @dataclass

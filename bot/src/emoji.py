@@ -43,8 +43,16 @@ class HelpEmoji:
 @dataclass
 class DefaultEmoji:
     anger = ':anger:'
-    scream_cat = ':scream_cat:'
+    coffee = ':coffee:'
+    japanese_goblin = ':japanese_goblin:'
     keycap = '\u20E3'
+    kissing_heart = ':kissing_heart:'
+    musical_note = ':musical_note:'
+    ok = ':ok:'
+    scream_cat = ':scream_cat:'
+    sleeping = ':sleeping:'
+    thinking = ':thinking:'
+    white_chk_m = ':white_check_mark:'
     zero_number = 0x0030
 
     @classmethod
