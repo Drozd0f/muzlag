@@ -24,6 +24,11 @@ class Config:
 
 
 @dataclass
+class ViewConfig:
+    delete_after = 10  # 1 minute
+
+
+@dataclass
 class DBConfig:
     name = os.getenv('DB_NAME', 'muzlag')
     path = f'{Config.base_dir}/db/{name}.db'

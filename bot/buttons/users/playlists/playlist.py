@@ -44,6 +44,8 @@ class AddSong(nextcord.ui.Button):
         def check(msg):
             return msg.author == self.view.member and msg.channel == interaction.message.channel
 
+        self.view.timeout = 5 * 60  # 5 minute
+
         while not self.save:
             msg: Message = await interaction.client.wait_for('message', check=check)
             await msg.delete()
@@ -80,6 +82,7 @@ class Save(nextcord.ui.Button):
         self.disable_button.emoji = self.disable_emoji
         self.view.remove_item(self)
         await self.view.refresh_view()
+        self.view.refresh_timeout()
         await interaction.response.edit_message(content=self.view.content_on_page, view=self.view)
 
 
@@ -99,6 +102,7 @@ class Play(nextcord.ui.Button):
         for song in songs:
             await queue.push(channel_id, player_factory(song.url))
 
+        self.view.timeout = 5 * 60  # 5 minute
         try:
             self.disabled = True
             await interaction.response.edit_message(content=self.view.content_on_page, view=self.view)

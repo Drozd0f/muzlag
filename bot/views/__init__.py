@@ -2,12 +2,14 @@ import typing as t
 
 import nextcord
 
+from bot.config import ViewConfig
+
 
 class BaseView(nextcord.ui.View):
     member_content: str
     _base_content: t.Optional[str] = None
 
-    def __init__(self, member: nextcord.Member, timeout: t.Optional[float] = 60):
+    def __init__(self, member: nextcord.Member, timeout: t.Optional[float] = ViewConfig.delete_after):
         super().__init__(timeout=timeout)
         self.member = member
 
@@ -30,6 +32,9 @@ class BaseView(nextcord.ui.View):
     def set_disable_buttons(self, disabled: bool):
         for child in self.children:
             child.disabled = disabled
+
+    def refresh_timeout(self):
+        self.timeout = ViewConfig.delete_after
 
     @property
     def base_content(self) -> str:

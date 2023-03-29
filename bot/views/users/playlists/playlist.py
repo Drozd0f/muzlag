@@ -16,7 +16,7 @@ from bot.buttons.users.playlists.pagination import ArrowLeft, ArrowRight
 
 class PlaylistView(BaseView):
     def __init__(self, member: Member, member_content: str, playlist: PlaylistModel, count_songs: int):
-        super().__init__(member, timeout=None)
+        super().__init__(member)
         self.member_content = member_content
         self.add_item(Cancel())
         self.playlist = playlist
