@@ -2,8 +2,12 @@ import yt_dlp as youtube_dl
 
 from bot.errors.yt_search import URLNotValid
 
+DEFAULT_RESOLUTION = ''
+DEFAULT_ASR = 0
+DEFAULT_FRAGMENTS = []
 
 youtube_dl.utils.bug_reports_message = lambda: ''
+
 
 ytdl_format_options = {
     'format': 'bestaudio/best',
@@ -36,10 +40,15 @@ class YoutubeSearch:
         if not url.startswith('http') or not url.startswith('https'):
             raise URLNotValid
         data = ytdl.extract_info(url, download=False)
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
+        # if 'entries' in data:
+        #     # take first item from a playlist
+        #     data = data['entries'][0]
+        for format in data.get('formats'):
+            resolution = format.get('resolution', DEFAULT_RESOLUTION)
+            asr = format.get('asr', DEFAULT_ASR)
+            if resolution == 'audio only' and asr == 48000:
+                data['formats'] = format
+                break
 
         data.update({'base_url': url})  # push base url for database usage
-
         return cls(data)
